@@ -1,9 +1,10 @@
 #!/bin/bash
 
+git pull origin master
+cd _source
 jekyll --no-server
-git checkout gh-pages
-git pull origin gh-pages
-rsync -vur --delete _site/* .
-rm -rf _site
-git add *
+cd ..
+rsync -vur --delete _source/_site/* .
+rm -rf _source/_site
+git add * .nojekyll
 git commit -m "Regenerate website"
