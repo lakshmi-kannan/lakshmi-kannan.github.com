@@ -1,0 +1,19 @@
+destination: ./_site
+lsi:         false
+server:      false
+server_port: 4000
+pygments:    true
+markdown:    maruku
+permalink:   date
+maruku:
+  use_tex:    false
+  use_divs:   false
+  png_dir:    images/latex
+  png_url:    /images/latex
+headline:    computers, programming, ponies and snakes.
+url:         http://www.tomaz.me
+domain:      www.tomaz.me
+exclude: ['README.MD', 'sitemap.xml']
+
+tag_page_layout: tag_page
+tag_page_dir: tags

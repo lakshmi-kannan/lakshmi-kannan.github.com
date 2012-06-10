@@ -1,0 +1,13 @@
+---
+layout: default
+---
+<h2>Tag: {{ page.tag }}</h2>
+<div class="postcontent">
+  <ul class="nobullet">
+  {% for post in page.posts %}
+    <li>
+     {{ post.date | date: "%b %d, %Y"  }}:<a href="{{ post.url }}"></a> {{ post.title }} | Tags: {{ post | tags }}
+    </li>
+  {% endfor %}
+  </ul>
+</div>
