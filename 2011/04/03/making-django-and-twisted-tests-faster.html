@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="tomaz.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>tomaz.me - Making Django and Twisted tests faster</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/106838062648597435631/about">Google plus</a></li>
+                <li><a href="http://twitter.com/KamiSLO">Twitter</a></li>
+                <li><a href="http://github.com/Kami">Github</a></li>
+                <li><a href="https://launchpad.net/~tomaz-muraus">Launchpad</a></li>
+                <li><a href="http://www.linkedin.com/in/tomazmuraus">LinkedIn</a></li>
+
+                <li><br /></li>
+                <li class="title">Friends and other blogs</li>
+                <li><a href="http://segv.net/">Ryan's site</a></li>
+                <li><a href="http://russellhaering.com/">Russell's blog</a></li>
+                <li><a href="http://journal.paul.querna.org/">Paul's journal</a></li>
+                <li><a href="http://geoff.greer.fm/">Geoff's site</a></li>
+                <li><a href="http://antirez.com/">antirez webblog</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">computers, programming, ponies and snakes.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Apr 03, 2011 </div>
+<div class="postcontent">
+    <h2 id='making_django_and_twisted_tests_faster'><a href='/2011/04/03/making-django-and-twisted-tests-faster.html'>Making Django and Twisted tests faster</a></h2>
+
+<p>As we all know writing tests is not particularly fun and having a test suite which takes a long time to complete makes everything even less enjoyable.</p>
+
+<p>Currently at Cloudkick our test suite is not particularly large or slow, but I still wanted the tests to finish faster (when dealing with tests, every minute counts).</p>
+
+<p>We have two types of tests - Django and Twisted tests.</p>
+
+<p>One obvious approach to speed the tests up is to run them in parallel.</p>
+
+<p>A similar solution which runs the tests in parallel already exists - <a href='http://somethingaboutorange.com/mrl/projects/nose/0.11.1/plugins/multiprocess.html'>multiprocessing plugin</a> for the <a href='http://somethingaboutorange.com/mrl/projects/nose/1.0.0/'>nose test runner</a>. The main problem with this plugin is, that it is pretty useless where a lot of tests depend on each other. Even when I have defined all the dependencies properly, the tests were still around 60% slower.</p>
+
+<p>In the end, I have decided to write a custom Django and Twisted test runner which runs the tests in parallel.</p>
+
+<p>Keep in mind that even before writing a custom test runner we have used a &#8220;trick&#8221; which makes the tests run faster - MySQL data directory on our continuous integration server is stored on a ram disk.</p>
+
+<p>Basically our new Django test runner works like this:</p>
+
+<ol>
+<li>Create a pool of worker processes</li>
+
+<li>Partition the tests so we can run each application tests in a separate worker process</li>
+
+<li>Put pending tests in the <code>pending_tests</code> queue</li>
+
+<li>Each worker waits for new a new item to appear in this queue and when available, runs the tests</li>
+
+<li>When a worker has finished running the tests, results are formatted, pickled and put in a separate <code>tests_results</code> queue</li>
+
+<li>Main process periodically checks for new items in the <code>tests_results</code> queue and prints the results when they are available</li>
+</ol>
+
+<p>The approach sounds pretty simple, but there are some caveats:</p>
+
+<ul>
+<li>
+<p>because multiple processes run in parallel this means that the test output will get interleaved. The solution is to buffer each worker output and finally print it out in the main process after the worker has finished running the tests. The problem with this approach is that the output is not real-time, but it should work fine for most of the cases. If we really wanted a real-time output, I could have used a lock, but this would just add additional complexity and slow things down.</p>
+</li>
+
+<li>
+<p>partitioning the tests - Currently our partitioning / grouping approach is really simple, but it works well. Django tests are grouped by application and the Twisted tests are grouped by the test module. Before trying this really simple partitioning / grouping scheme I have experimented with more complicated approaches, but it turned out that in our case, simple approach is better.</p>
+</li>
+
+<li>
+<p>creating a separate database for each worker. Most of our Django tests manipulate the state in the database so a reasonable solution is to create a separate database for each worker. To make this work I had to override the <code>setup_databases()</code> function defined in the Django test runner class.</p>
+</li>
+</ul>
+
+<p>Because this function has changed in Django 1.3 I also had to create two separate versions - one for Django 1.2 and one for Django 1.3.</p>
+<div class='highlight'><pre><code class='python'><span class='o'>...</span>
+<span class='k'>def</span> <span class='nf'>setup_databases</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='o'>**</span><span class='n'>kwargs</span><span class='p'>):</span>
+  <span class='k'>if</span> <span class='n'>VERSION</span><span class='p'>[</span><span class='mi'>0</span><span class='p'>]</span> <span class='o'>==</span> <span class='mi'>1</span><span class='p'>:</span>
+    <span class='k'>if</span> <span class='n'>VERSION</span><span class='p'>[</span><span class='mi'>1</span><span class='p'>]</span> <span class='o'>==</span> <span class='mi'>2</span> <span class='ow'>and</span> <span class='n'>VERSION</span><span class='p'>[</span><span class='mi'>2</span><span class='p'>]</span> <span class='o'>&lt;</span> <span class='mi'>4</span><span class='p'>:</span>
+      <span class='k'>return</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>setup_databases_12</span><span class='p'>(</span><span class='o'>**</span><span class='n'>kwargs</span><span class='p'>)</span>
+    <span class='k'>elif</span> <span class='n'>VERSION</span><span class='p'>[</span><span class='mi'>2</span><span class='p'>]</span> <span class='o'>&gt;=</span> <span class='mi'>4</span> <span class='ow'>or</span> <span class='n'>VERSION</span><span class='p'>[</span><span class='mi'>1</span><span class='p'>]</span> <span class='o'>==</span> <span class='mi'>3</span><span class='p'>:</span>
+      <span class='k'>return</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>setup_databases_13</span><span class='p'>(</span><span class='o'>**</span><span class='n'>kwargs</span><span class='p'>)</span>
+
+  <span class='k'>raise</span> <span class='ne'>Exception</span><span class='p'>(</span><span class='s'>&#39;Unsupported Django Version: </span><span class='si'>%s</span><span class='s'>&#39;</span> <span class='o'>%</span> <span class='p'>(</span><span class='nb'>str</span><span class='p'>(</span><span class='n'>VERSION</span><span class='p'>)))</span>
+
+<span class='k'>def</span> <span class='nf'>setup_databases_12</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='o'>**</span><span class='n'>kwargs</span><span class='p'>):</span>
+  <span class='c'># Taken from django.test.simple</span>
+  <span class='n'>old_names</span> <span class='o'>=</span> <span class='p'>[]</span>
+  <span class='n'>mirrors</span> <span class='o'>=</span> <span class='p'>[]</span>
+
+  <span class='n'>worker_index</span> <span class='o'>=</span> <span class='n'>kwargs</span><span class='o'>.</span><span class='n'>get</span><span class='p'>(</span><span class='s'>&#39;worker_index&#39;</span><span class='p'>,</span> <span class='bp'>None</span><span class='p'>)</span>
+  <span class='k'>for</span> <span class='n'>alias</span> <span class='ow'>in</span> <span class='n'>connections</span><span class='p'>:</span>
+    <span class='n'>connection</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span>
+    <span class='n'>database_name</span> <span class='o'>=</span> <span class='s'>&#39;test_</span><span class='si'>%d</span><span class='s'>_</span><span class='si'>%s</span><span class='s'>&#39;</span> <span class='o'>%</span> <span class='p'>(</span><span class='n'>worker_index</span><span class='p'>,</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>])</span>
+    <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;TEST_NAME&#39;</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>database_name</span>
+    <span class='k'>if</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;TEST_MIRROR&#39;</span><span class='p'>]:</span>
+      <span class='n'>mirrors</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>alias</span><span class='p'>,</span> <span class='n'>connection</span><span class='p'>))</span>
+      <span class='n'>mirror_alias</span> <span class='o'>=</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;TEST_MIRROR&#39;</span><span class='p'>]</span>
+      <span class='n'>connections</span><span class='o'>.</span><span class='n'>_connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>mirror_alias</span><span class='p'>]</span>
+    <span class='k'>else</span><span class='p'>:</span>
+      <span class='n'>old_names</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>connection</span><span class='p'>,</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>]))</span>
+      <span class='n'>connection</span><span class='o'>.</span><span class='n'>creation</span><span class='o'>.</span><span class='n'>create_test_db</span><span class='p'>(</span><span class='n'>verbosity</span><span class='o'>=</span><span class='mi'>0</span><span class='p'>,</span> <span class='n'>autoclobber</span><span class='o'>=</span><span class='ow'>not</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>interactive</span><span class='p'>)</span>
+  <span class='k'>return</span> <span class='n'>old_names</span><span class='p'>,</span> <span class='n'>mirrors</span>
+
+<span class='k'>def</span> <span class='nf'>setup_databases_13</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='o'>**</span><span class='n'>kwargs</span><span class='p'>):</span>
+  <span class='c'># Taken from django.test.simple</span>
+  <span class='kn'>from</span> <span class='nn'>django.test.simple</span> <span class='kn'>import</span> <span class='n'>dependency_ordered</span>
+
+  <span class='n'>mirrored_aliases</span> <span class='o'>=</span> <span class='p'>{}</span>
+  <span class='n'>test_databases</span> <span class='o'>=</span> <span class='p'>{}</span>
+  <span class='n'>dependencies</span> <span class='o'>=</span> <span class='p'>{}</span>
+
+  <span class='n'>worker_index</span> <span class='o'>=</span> <span class='n'>kwargs</span><span class='o'>.</span><span class='n'>get</span><span class='p'>(</span><span class='s'>&#39;worker_index&#39;</span><span class='p'>,</span> <span class='bp'>None</span><span class='p'>)</span>
+  <span class='k'>for</span> <span class='n'>alias</span> <span class='ow'>in</span> <span class='n'>connections</span><span class='p'>:</span>
+    <span class='n'>connection</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span>
+    <span class='n'>database_name</span> <span class='o'>=</span> <span class='s'>&#39;test_</span><span class='si'>%d</span><span class='s'>_</span><span class='si'>%s</span><span class='s'>&#39;</span> <span class='o'>%</span> <span class='p'>(</span><span class='n'>worker_index</span><span class='p'>,</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>])</span>
+    <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;TEST_NAME&#39;</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>database_name</span>
+
+    <span class='n'>item</span> <span class='o'>=</span> <span class='n'>test_databases</span><span class='o'>.</span><span class='n'>setdefault</span><span class='p'>(</span>
+        <span class='n'>connection</span><span class='o'>.</span><span class='n'>creation</span><span class='o'>.</span><span class='n'>test_db_signature</span><span class='p'>(),</span>
+        <span class='p'>(</span><span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>],</span> <span class='p'>[])</span>
+    <span class='p'>)</span>
+    <span class='n'>item</span><span class='p'>[</span><span class='mi'>1</span><span class='p'>]</span><span class='o'>.</span><span class='n'>append</span><span class='p'>(</span><span class='n'>alias</span><span class='p'>)</span>
+    <span class='k'>if</span> <span class='n'>alias</span> <span class='o'>!=</span> <span class='n'>DEFAULT_DB_ALIAS</span><span class='p'>:</span>
+      <span class='n'>dependencies</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='o'>.</span><span class='n'>get</span><span class='p'>(</span><span class='s'>&#39;TEST_DEPENDENCIES&#39;</span><span class='p'>,</span> <span class='p'>[</span><span class='n'>DEFAULT_DB_ALIAS</span><span class='p'>])</span>
+
+  <span class='n'>old_names</span> <span class='o'>=</span> <span class='p'>[]</span>
+  <span class='n'>mirrors</span> <span class='o'>=</span> <span class='p'>[]</span>
+  <span class='k'>for</span> <span class='n'>signature</span><span class='p'>,</span> <span class='p'>(</span><span class='n'>db_name</span><span class='p'>,</span> <span class='n'>aliases</span><span class='p'>)</span> <span class='ow'>in</span> <span class='n'>dependency_ordered</span><span class='p'>(</span><span class='n'>test_databases</span><span class='o'>.</span><span class='n'>items</span><span class='p'>(),</span> <span class='n'>dependencies</span><span class='p'>):</span>
+      <span class='n'>connection</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>aliases</span><span class='p'>[</span><span class='mi'>0</span><span class='p'>]]</span>
+      <span class='n'>old_names</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>connection</span><span class='p'>,</span> <span class='n'>db_name</span><span class='p'>,</span> <span class='bp'>True</span><span class='p'>))</span>
+      <span class='n'>test_db_name</span> <span class='o'>=</span> <span class='n'>connection</span><span class='o'>.</span><span class='n'>creation</span><span class='o'>.</span><span class='n'>create_test_db</span><span class='p'>(</span><span class='n'>verbosity</span><span class='o'>=</span><span class='mi'>0</span><span class='p'>,</span> <span class='n'>autoclobber</span><span class='o'>=</span><span class='ow'>not</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>interactive</span><span class='p'>)</span>
+      <span class='k'>for</span> <span class='n'>alias</span> <span class='ow'>in</span> <span class='n'>aliases</span><span class='p'>[</span><span class='mi'>1</span><span class='p'>:]:</span>
+          <span class='n'>connection</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span>
+          <span class='k'>if</span> <span class='n'>db_name</span><span class='p'>:</span>
+            <span class='n'>old_names</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>connection</span><span class='p'>,</span> <span class='n'>db_name</span><span class='p'>,</span> <span class='bp'>False</span><span class='p'>))</span>
+            <span class='n'>connection</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>test_db_name</span>
+          <span class='k'>else</span><span class='p'>:</span>
+            <span class='n'>old_names</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>connection</span><span class='p'>,</span> <span class='n'>db_name</span><span class='p'>,</span> <span class='bp'>True</span><span class='p'>))</span>
+            <span class='n'>connection</span><span class='o'>.</span><span class='n'>creation</span><span class='o'>.</span><span class='n'>create_test_db</span><span class='p'>(</span><span class='n'>verbosity</span><span class='o'>=</span><span class='mi'>0</span><span class='p'>,</span> <span class='n'>autoclobber</span><span class='o'>=</span><span class='ow'>not</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>interactive</span><span class='p'>)</span>
+
+  <span class='k'>for</span> <span class='n'>alias</span><span class='p'>,</span> <span class='n'>mirror_alias</span> <span class='ow'>in</span> <span class='n'>mirrored_aliases</span><span class='o'>.</span><span class='n'>items</span><span class='p'>():</span>
+    <span class='n'>mirrors</span><span class='o'>.</span><span class='n'>append</span><span class='p'>((</span><span class='n'>alias</span><span class='p'>,</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>]))</span>
+    <span class='n'>connections</span><span class='p'>[</span><span class='n'>alias</span><span class='p'>]</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>]</span> <span class='o'>=</span> <span class='n'>connections</span><span class='p'>[</span><span class='n'>mirror_alias</span><span class='p'>]</span><span class='o'>.</span><span class='n'>settings_dict</span><span class='p'>[</span><span class='s'>&#39;NAME&#39;</span><span class='p'>]</span>
+
+  <span class='k'>return</span> <span class='n'>old_names</span><span class='p'>,</span> <span class='n'>mirrors</span>
+<span class='o'>...</span>
+</code></pre>
+</div>
+<p>I have also used a very similar approach for the Twisted parallel test runner.</p>
+
+<p>As a first thing, I have created a special base class which works similar as the Django <code>TestCase</code> class - it disables database transactions in <code>setUp()</code> and does a database roll-back in the <code>tearDown()</code> method (database rollback is a lot faster than re-creating all the tables).</p>
+
+<p>For the Twisted runner to buffer the test output, I had to modify the trial <code>_makeRunner</code> function and pass it in a custom stream object.</p>
+<div class='highlight'><pre><code class='python'><span class='k'>class</span> <span class='nc'>BufferWritesDevice</span><span class='p'>(</span><span class='nb'>object</span><span class='p'>):</span>
+
+  <span class='k'>def</span> <span class='nf'>__init__</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>):</span>
+    <span class='bp'>self</span><span class='o'>.</span><span class='n'>_data</span> <span class='o'>=</span> <span class='p'>[]</span>
+
+  <span class='k'>def</span> <span class='nf'>write</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='n'>string</span><span class='p'>):</span>
+    <span class='bp'>self</span><span class='o'>.</span><span class='n'>_data</span><span class='o'>.</span><span class='n'>append</span><span class='p'>(</span><span class='n'>string</span><span class='p'>)</span>
+
+  <span class='k'>def</span> <span class='nf'>read</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>):</span>
+    <span class='k'>return</span> <span class='s'>&#39;&#39;</span><span class='o'>.</span><span class='n'>join</span><span class='p'>(</span><span class='bp'>self</span><span class='o'>.</span><span class='n'>_data</span><span class='p'>)</span>
+
+  <span class='k'>def</span> <span class='nf'>flush</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='o'>*</span><span class='n'>args</span><span class='p'>,</span> <span class='o'>**</span><span class='n'>kwargs</span><span class='p'>):</span>
+    <span class='k'>pass</span>
+
+  <span class='k'>def</span> <span class='nf'>isatty</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>):</span>
+    <span class='k'>return</span> <span class='bp'>False</span>
+
+<span class='o'>....</span>
+
+<span class='k'>def</span> <span class='nf'>_tests_func</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='n'>tests</span><span class='p'>,</span> <span class='n'>worker_index</span><span class='p'>):</span>
+  <span class='k'>if</span> <span class='ow'>not</span> <span class='nb'>isinstance</span><span class='p'>(</span><span class='n'>tests</span><span class='p'>,</span> <span class='p'>(</span><span class='nb'>list</span><span class='p'>,</span> <span class='nb'>set</span><span class='p'>)):</span>
+    <span class='n'>tests</span> <span class='o'>=</span> <span class='p'>[</span> <span class='n'>tests</span> <span class='p'>]</span>
+
+  <span class='n'>args</span> <span class='o'>=</span> <span class='p'>[</span> <span class='s'>&#39;-e&#39;</span> <span class='p'>]</span>
+  <span class='n'>args</span><span class='o'>.</span><span class='n'>extend</span><span class='p'>(</span><span class='n'>tests</span><span class='p'>)</span>
+
+  <span class='n'>config</span> <span class='o'>=</span> <span class='n'>Options</span><span class='p'>()</span>
+  <span class='n'>config</span><span class='o'>.</span><span class='n'>parseOptions</span><span class='p'>(</span><span class='n'>args</span><span class='p'>)</span>
+
+  <span class='n'>stream</span> <span class='o'>=</span> <span class='n'>BufferWritesDevice</span><span class='p'>()</span>
+  <span class='n'>runner</span> <span class='o'>=</span> <span class='bp'>self</span><span class='o'>.</span><span class='n'>_make_runner</span><span class='p'>(</span><span class='n'>config</span><span class='o'>=</span><span class='n'>config</span><span class='p'>,</span> <span class='n'>stream</span><span class='o'>=</span><span class='n'>stream</span><span class='p'>)</span>
+  <span class='n'>suite</span> <span class='o'>=</span> <span class='n'>_getSuite</span><span class='p'>(</span><span class='n'>config</span><span class='p'>)</span>
+  <span class='n'>result</span> <span class='o'>=</span> <span class='n'>setup_test_db</span><span class='p'>(</span><span class='n'>worker_index</span><span class='p'>,</span> <span class='bp'>None</span><span class='p'>,</span> <span class='n'>runner</span><span class='o'>.</span><span class='n'>run</span><span class='p'>,</span> <span class='n'>suite</span><span class='p'>)</span>
+  <span class='n'>result</span> <span class='o'>=</span> <span class='n'>TestResult</span><span class='p'>()</span><span class='o'>.</span><span class='n'>from_trial_result</span><span class='p'>(</span><span class='n'>result</span><span class='p'>)</span>
+  <span class='k'>return</span> <span class='n'>result</span>
+
+<span class='o'>...</span>
+
+<span class='k'>def</span> <span class='nf'>_make_runner</span><span class='p'>(</span><span class='bp'>self</span><span class='p'>,</span> <span class='n'>config</span><span class='p'>,</span> <span class='n'>stream</span><span class='p'>):</span>
+  <span class='c'># Based on twisted.scripts.trial._makeRunner</span>
+  <span class='n'>mode</span> <span class='o'>=</span> <span class='bp'>None</span>
+  <span class='k'>if</span> <span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;debug&#39;</span><span class='p'>]:</span>
+      <span class='n'>mode</span> <span class='o'>=</span> <span class='n'>TrialRunner</span><span class='o'>.</span><span class='n'>DEBUG</span>
+  <span class='k'>if</span> <span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;dry-run&#39;</span><span class='p'>]:</span>
+      <span class='n'>mode</span> <span class='o'>=</span> <span class='n'>TrialRunner</span><span class='o'>.</span><span class='n'>DRY_RUN</span>
+  <span class='k'>return</span> <span class='n'>TrialRunner</span><span class='p'>(</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;reporter&#39;</span><span class='p'>],</span>
+                            <span class='n'>mode</span><span class='o'>=</span><span class='n'>mode</span><span class='p'>,</span>
+                            <span class='n'>stream</span><span class='o'>=</span><span class='n'>stream</span><span class='p'>,</span>
+                            <span class='n'>profile</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;profile&#39;</span><span class='p'>],</span>
+                            <span class='n'>logfile</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;logfile&#39;</span><span class='p'>],</span>
+                            <span class='n'>tracebackFormat</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;tbformat&#39;</span><span class='p'>],</span>
+                            <span class='n'>realTimeErrors</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;rterrors&#39;</span><span class='p'>],</span>
+                            <span class='n'>uncleanWarnings</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;unclean-warnings&#39;</span><span class='p'>],</span>
+                            <span class='n'>workingDirectory</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;temp-directory&#39;</span><span class='p'>],</span>
+                            <span class='n'>forceGarbageCollection</span><span class='o'>=</span><span class='n'>config</span><span class='p'>[</span><span class='s'>&#39;force-gc&#39;</span><span class='p'>])</span>
+
+<span class='o'>...</span>
+</code></pre>
+</div>
+<p>To make each worker use a separate database I also had to manually manipulate the connection <code>settings_dict</code> dictionary and adjust the value for the <code>TEST_NAME</code> item (I prepend worker index to each test database name).</p>
+
+<p>There are still a lot of possible improvements left and some of them are already on my road-map.</p>
+
+<p>Currently our number of tests and applications is not that high so it does not add much overhead to spawn a separate worker process for each application. Later on when our application number grows, it might make sense to use a smarter grouping method.</p>
+
+<p>Because not all of the Django tests require access to the database, one obvious improvement would also be to spawn a separate worker process for those tests.</p>
+
+<p>As I mentioned previously, our MySQL data directory is located on a ram disk so creating a database does not take that long, but every change which makes tests faster and is not too complex is worth considering.</p>
+
+<p>In the end this modifications did take some time, but it was well wort it - both Django and Twisted tests now finish around <strong>50%</strong> - <strong>60%</strong> faster.</p>
+
+<p><strong>Update: Multiple people have asked me about the full runner source code so I have put it in Github - <a href='https://github.com/Kami/parallel-django-and-twisted-test-runner'>https://github.com/Kami/parallel-django-and-twisted-test-runner</a>.</strong></p>
+</div>
+<div class="tags">Tags: <a href="/tags/programming.html">programming</a>, <a href="/tags/python.html">python</a>, <a href="/tags/django.html">django</a>, <a href="/tags/twisted.html">twisted</a>, <a href="/tags/testing.html">testing</a></div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank" title="Yeah, if you are a Pythonista don't get too excited, it's Ruby">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>
