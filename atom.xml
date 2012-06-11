@@ -5,7 +5,7 @@
 	<link href="http://www.tomaz.me" rel="self" />
 	<link href="http://www.tomaz.me" />
 	<id>http://www.tomaz.me</id>
-	<updated>2012-06-10T18:23:39-07:00</updated>
+	<updated>2012-06-10T18:40:29-07:00</updated>
 	<author>
 		<name>Tomaz Muraus</name>
 		<email>tomaz@tomaz.me</email>
@@ -32,7 +32,7 @@
 
 &lt;li&gt;Libcloud has applied to &lt;a href='http://www.google-melange.com/gsoc/homepage/google/gsoc2012'&gt;Google Summer of Code 2012&lt;/a&gt; under Apache organization. We have received 1 slot. Student Ilgiz Islamgulov will be working on the &lt;a href='https://issues.apache.org/jira/browse/LIBCLOUD-159'&gt;Libcloud REST interface&lt;/a&gt; this summer.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class='imginline'&gt;&lt;img src='/images/dancing_robots.jpg' class='inline' /&gt;&lt;br /&gt;Dancing robots at PyCon&lt;br /&gt;&lt;/div&gt;
+&lt;div class='imginline'&gt;&lt;img class='inline' src='/images/dancing_robots.jpg' /&gt;&lt;br /&gt;Dancing robots at PyCon&lt;br /&gt;&lt;/div&gt;
 &lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
 
 &lt;ul&gt;
@@ -333,7 +333,7 @@
 &lt;p&gt;May has been a very busy and important month for us. We have finally manged to finalize and release a long awaited version 0.5.0.&lt;/p&gt;
 
 &lt;p&gt;Part of the reason that we have finally managed to release 0.5.0 this month was that me and &lt;a href='http://paul.querna.org/'&gt;Paul Querna&lt;/a&gt; were present at the Apache Retreat in Ireland where we have spent some time hacking on Libcloud and polishing the last few features which were missing for the release.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://libcloud.apache.org'&gt;&lt;img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://libcloud.apache.org'&gt;&lt;img align='middle' style='border: none !important;' src='/images/libcloud_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;Overall, Libcloud 0.5.0 is a big step forward and represents a big milestone for the project. It includes many new features, improvements and new compute drivers.&lt;/p&gt;
 
 &lt;h3 id='major_changes_in_libcloud_050'&gt;Major changes in Libcloud 0.5.0&lt;/h3&gt;
@@ -373,7 +373,7 @@
 &lt;h3 id='graduation_to_a_top_level_project'&gt;Graduation to a Top Level Project&lt;/h3&gt;
 
 &lt;p&gt;Second very important milestone for us this month was graduating from the Apache Incubator to a Top Level Project. This puts us on par with other Apache projects such as Apache Cassandra and Apache Subversion.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://apache.org/'&gt;&lt;img src='/images/apache_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://apache.org/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/apache_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;Graduation signifies that both the Apache Libcloud product and community have been well-governed under the Foundation&amp;#8217;s meritocratic, consensus-driven process and principles.&lt;/p&gt;
 
 &lt;p&gt;Graduating to a Top Level Project means that now we have a &lt;a href='http://www.apache.org/dev/pmc.html'&gt;Project Management Committee&lt;/a&gt; (PMC) which will overlook our operations and make sure everything is running smoothly.&lt;/p&gt;
@@ -385,7 +385,7 @@
 &lt;p&gt;Official graduation announcement / press release can be found on the Apache blog - &lt;a href='https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces12'&gt;The Apache Software Foundation Announces Apache Libcloud as a Top-Level Project&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id='libcloud_at_europython_2011_in_florence_italy'&gt;Libcloud at EuroPython 2011 in Florence, Italy&lt;/h3&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://ep2011.europython.eu/'&gt;&lt;img src='/images/europython_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://ep2011.europython.eu/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/europython_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;I will be at EuroPython in Italy next month where I will give an &lt;a href='http://ep2011.europython.eu/conference/talks/managing-the-cloud-with-libcloud'&gt;introductory talk about Libcloud&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Beside giving a talk we will also host a development sprint there. This is a great opportunity for anyone who wants to contribute to the project or learn something new to join us. I will post more details about the sprint in the upcoming weeks on the &lt;a href='http://libcloud.apache.org/devinfo.html'&gt;libcloud mailing list&lt;/a&gt;.&lt;/p&gt;
@@ -401,7 +401,7 @@
 		<content type="html">&lt;h2 id='libcloud_monthly_update_april_2011__storage_api_loadbalancer_api_new_drivers'&gt;&lt;a href='/2011/04/26/libcloud-monthly-update-april-2011-storage-api-load-balancer-api-new-drivers.html'&gt;libcloud Monthly Update (April 2011) - Storage API, load-balancer API, new drivers&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Another month is around and it is time for another libcloud monthly update post. I did not write one previous month, because I have written &amp;#8221;&lt;a href='/2011/03/18/pycon-us-2011-recap.html'&gt;PyCon US 2011 Recap&lt;/a&gt;&amp;#8221; post which also includes information about libcloud development which has happened during PyCon and in March.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://incubator.apache.org/libcloud/'&gt;&lt;img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://incubator.apache.org/libcloud/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/libcloud_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;h3 id='what_has_been_accomplished_in_april_2011'&gt;What has been accomplished in April 2011&lt;/h3&gt;
 
 &lt;ul&gt;
