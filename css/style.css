@@ -133,8 +133,17 @@ p {
     width: 780px;
 }
 .postdate {
-   text-align: right;
-   margin-bottom: 40px;
+   float: right;
+}
+.postsocial {
+    float: left;
+    height: 90px;
+}
+.posttags {
+  float: left;
+}
+.postfooter {
+   margin-bottom: 70px;
 }
 .postdateheading {
    text-align: right;
