@@ -5,12 +5,116 @@
 	<link href="http://www.tomaz.me" rel="self" />
 	<link href="http://www.tomaz.me" />
 	<id>http://www.tomaz.me</id>
-	<updated>2012-06-10T18:40:29-07:00</updated>
+	<updated>2012-07-22T23:06:31-07:00</updated>
 	<author>
 		<name>Tomaz Muraus</name>
 		<email>tomaz@tomaz.me</email>
 	</author>
 
+    
+	<entry>
+		<title>Hosting APT repository on Rackspace CloudFiles</title>
+        <link href="http://www.tomaz.me/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html" />
+        <id>http://www.tomaz.me/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html</id>
+		<updated>2012-07-22T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='hosting_apt_repository_on_rackspace_cloudfiles'&gt;&lt;a href='/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html'&gt;Hosting APT repository on Rackspace CloudFiles&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;In this post I will describe how to host APT repository on &lt;a href='http://www.rackspace.com/cloud/cloud_hosting_products/files/'&gt;Rackspace Cloud Files&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;First you need to create a CDN enabled container. You can do this using Libcloud or the new &lt;a href='https://mycloud.rackspace.com'&gt;Rackspace control panel&lt;/a&gt;. Depending on how frequently you are going update your APT repository it is also recommended to lower the container TTL from the default value of 3 days to 900 seconds.&lt;/p&gt;
+
+&lt;p&gt;After you have created a CDN enabled container you need to install Python script I wrote which allows you to sychronize files from a local directory to a container hosted in one of the Storage providers &lt;a href='http://libcloud.apache.org/supported_providers.html'&gt;supported by Libcloud&lt;/a&gt;.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;  sudo pip install file-syncer&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Next we are going to create a dummy APT repository::&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;mkdir -p /tmp/apt-test/conf&lt;/span&gt;
+&lt;span class='go'&gt;cat &amp;gt; /tmp/apt-test/conf/distributions &amp;lt;&amp;lt;DELIM&lt;/span&gt;
+&lt;span class='go'&gt;codename: precise&lt;/span&gt;
+&lt;span class='go'&gt;Components: main&lt;/span&gt;
+&lt;span class='go'&gt;Architectures: i386 amd64&lt;/span&gt;
+&lt;span class='go'&gt;DELIM&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Add a test package using &lt;code&gt;reprepro&lt;/code&gt;:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;wget http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb&lt;/span&gt;
+&lt;span class='go'&gt;reprepro -b /tmp/apt-test/ includedeb precise acpi_0.09-3ubuntu1_amd64.deb&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;And test the script:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;file-syncer --log-level=DEBUG --directory=/tmp/apt-test/ --username=your username --key=your api key --container-name=container name&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;If everything went well, you should see an output similar to this one:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;22 Jul 2012 22:36:05 : INFO     : Using provider: CloudFiles (US)&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:07 : DEBUG    : Found 15 local files&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Manifest doesn&amp;#39;t exist, assuming that there are no remote files&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Found 0 remote files&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : INFO     : To remove: 0, to upload: 15&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/contents.cache.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/packages.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/release.caches.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/version&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: conf/distributions&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/references.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages.gz&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages.gz&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/release.caches.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Uploading object: db/checksums.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: conf/distributions&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/packages.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/contents.cache.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/references.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/version&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages.gz&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages.gz&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: db/checksums.db&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Release&lt;/span&gt;
+&lt;span class='go'&gt;22 Jul 2012 22:36:11 : INFO     : Synchronization complete, took: 4.62 seconds&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;After the upload has finished, you can test the repository by adding it to your APT sources list:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;  echo &amp;quot;deb http://c15173579.r79.cf2.rackcdn.com precise main&amp;quot; | sudo tee -a /etc/apt/sources.list.d/test-api-repo.list&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;We are also going to disable APT HTTP request pipeling. This step is required, because a nginx proxy running in front of the CDN doesn&amp;#8217;t seem to support HTTP/1.1 pipelining. If you skip this test apt-get update will still work, but it will get stuck on &lt;code&gt;[Waiting for headers]&lt;/code&gt; for a longer period of time.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;  echo &amp;quot;Acquire::http::Pipeline-Depth &amp;quot;0&amp;quot;;&amp;quot; | sudo tee -a /etc/apt/apt.conf.d/pipeline-workaround.conf&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;You can test that everything is working by issuing the following command:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;  sudo apt-get update ; sudo apt-cache policy acpi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;You should get an output similar to this one:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='console'&gt;&lt;span class='go'&gt;acpi:&lt;/span&gt;
+&lt;span class='go'&gt;  Installed: (none)&lt;/span&gt;
+&lt;span class='go'&gt;  Candidate: 1.6-1&lt;/span&gt;
+&lt;span class='go'&gt;  Version table:&lt;/span&gt;
+&lt;span class='go'&gt;     1.6-1 0&lt;/span&gt;
+&lt;span class='go'&gt;        500 http://us.archive.ubuntu.com/ubuntu/ precise/universe amd64 Packages&lt;/span&gt;
+&lt;span class='go'&gt;     0.09-3ubuntu1 0&lt;/span&gt;
+&lt;span class='go'&gt;        500 http://c15173579.r79.cf2.rackcdn.com/ precise/main amd64 Packages&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;That is it. To make sure your container is always up to date, you need synchronize it every time you add a new packages. This can be achieved in multiple ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;adding a script which runs synchronize command after adding a package&lt;/li&gt;
+
+&lt;li&gt;adding a cron job which periodically runs the sync command&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
     
 	<entry>
 		<title>Libcloud Update (April 2012) - 0.8.0, 0.9.1, GSoC</title>
@@ -32,7 +136,7 @@
 
 &lt;li&gt;Libcloud has applied to &lt;a href='http://www.google-melange.com/gsoc/homepage/google/gsoc2012'&gt;Google Summer of Code 2012&lt;/a&gt; under Apache organization. We have received 1 slot. Student Ilgiz Islamgulov will be working on the &lt;a href='https://issues.apache.org/jira/browse/LIBCLOUD-159'&gt;Libcloud REST interface&lt;/a&gt; this summer.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class='imginline'&gt;&lt;img class='inline' src='/images/dancing_robots.jpg' /&gt;&lt;br /&gt;Dancing robots at PyCon&lt;br /&gt;&lt;/div&gt;
+&lt;div class='imginline'&gt;&lt;img src='/images/dancing_robots.jpg' class='inline' /&gt;&lt;br /&gt;Dancing robots at PyCon&lt;br /&gt;&lt;/div&gt;
 &lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
 
 &lt;ul&gt;
@@ -333,7 +437,7 @@
 &lt;p&gt;May has been a very busy and important month for us. We have finally manged to finalize and release a long awaited version 0.5.0.&lt;/p&gt;
 
 &lt;p&gt;Part of the reason that we have finally managed to release 0.5.0 this month was that me and &lt;a href='http://paul.querna.org/'&gt;Paul Querna&lt;/a&gt; were present at the Apache Retreat in Ireland where we have spent some time hacking on Libcloud and polishing the last few features which were missing for the release.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://libcloud.apache.org'&gt;&lt;img align='middle' style='border: none !important;' src='/images/libcloud_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a href='http://libcloud.apache.org' target='_blank'&gt;&lt;img src='/images/libcloud_logo.png' align='middle' style='border: none !important;' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;Overall, Libcloud 0.5.0 is a big step forward and represents a big milestone for the project. It includes many new features, improvements and new compute drivers.&lt;/p&gt;
 
 &lt;h3 id='major_changes_in_libcloud_050'&gt;Major changes in Libcloud 0.5.0&lt;/h3&gt;
@@ -373,7 +477,7 @@
 &lt;h3 id='graduation_to_a_top_level_project'&gt;Graduation to a Top Level Project&lt;/h3&gt;
 
 &lt;p&gt;Second very important milestone for us this month was graduating from the Apache Incubator to a Top Level Project. This puts us on par with other Apache projects such as Apache Cassandra and Apache Subversion.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://apache.org/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/apache_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a href='http://apache.org/' target='_blank'&gt;&lt;img src='/images/apache_logo.png' align='middle' style='border: none !important;' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;Graduation signifies that both the Apache Libcloud product and community have been well-governed under the Foundation&amp;#8217;s meritocratic, consensus-driven process and principles.&lt;/p&gt;
 
 &lt;p&gt;Graduating to a Top Level Project means that now we have a &lt;a href='http://www.apache.org/dev/pmc.html'&gt;Project Management Committee&lt;/a&gt; (PMC) which will overlook our operations and make sure everything is running smoothly.&lt;/p&gt;
@@ -385,7 +489,7 @@
 &lt;p&gt;Official graduation announcement / press release can be found on the Apache blog - &lt;a href='https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces12'&gt;The Apache Software Foundation Announces Apache Libcloud as a Top-Level Project&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id='libcloud_at_europython_2011_in_florence_italy'&gt;Libcloud at EuroPython 2011 in Florence, Italy&lt;/h3&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://ep2011.europython.eu/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/europython_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a href='http://ep2011.europython.eu/' target='_blank'&gt;&lt;img src='/images/europython_logo.png' align='middle' style='border: none !important;' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;p&gt;I will be at EuroPython in Italy next month where I will give an &lt;a href='http://ep2011.europython.eu/conference/talks/managing-the-cloud-with-libcloud'&gt;introductory talk about Libcloud&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Beside giving a talk we will also host a development sprint there. This is a great opportunity for anyone who wants to contribute to the project or learn something new to join us. I will post more details about the sprint in the upcoming weeks on the &lt;a href='http://libcloud.apache.org/devinfo.html'&gt;libcloud mailing list&lt;/a&gt;.&lt;/p&gt;
@@ -401,7 +505,7 @@
 		<content type="html">&lt;h2 id='libcloud_monthly_update_april_2011__storage_api_loadbalancer_api_new_drivers'&gt;&lt;a href='/2011/04/26/libcloud-monthly-update-april-2011-storage-api-load-balancer-api-new-drivers.html'&gt;libcloud Monthly Update (April 2011) - Storage API, load-balancer API, new drivers&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Another month is around and it is time for another libcloud monthly update post. I did not write one previous month, because I have written &amp;#8221;&lt;a href='/2011/03/18/pycon-us-2011-recap.html'&gt;PyCon US 2011 Recap&lt;/a&gt;&amp;#8221; post which also includes information about libcloud development which has happened during PyCon and in March.&lt;/p&gt;
-&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://incubator.apache.org/libcloud/'&gt;&lt;img align='middle' style='border: none !important;' src='/images/libcloud_logo.png' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;div style='text-align: center;'&gt;&lt;a href='http://incubator.apache.org/libcloud/' target='_blank'&gt;&lt;img src='/images/libcloud_logo.png' align='middle' style='border: none !important;' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
 &lt;h3 id='what_has_been_accomplished_in_april_2011'&gt;What has been accomplished in April 2011&lt;/h3&gt;
 
 &lt;ul&gt;
@@ -648,50 +752,6 @@
 &lt;p&gt;In the end this modifications did take some time, but it was well wort it - both Django and Twisted tests now finish around &lt;strong&gt;50%&lt;/strong&gt; - &lt;strong&gt;60%&lt;/strong&gt; faster.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Update: Multiple people have asked me about the full runner source code so I have put it in Github - &lt;a href='https://github.com/Kami/parallel-django-and-twisted-test-runner'&gt;https://github.com/Kami/parallel-django-and-twisted-test-runner&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;</content>
-	</entry>
-    
-	<entry>
-		<title>PyCon US 2011 recap</title>
-        <link href="http://www.tomaz.me/2011/03/18/pycon-us-2011-recap.html" />
-        <id>http://www.tomaz.me/2011/03/18/pycon-us-2011-recap.html</id>
-		<updated>2011-03-18T00:00:00-07:00</updated>
-		<content type="html">&lt;h2 id='pycon_us_2011_recap'&gt;&lt;a href='/2011/03/18/pycon-us-2011-recap.html'&gt;PyCon US 2011 recap&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;PyCon has officially finished yesterday. It has been a great week. I have met a lot of cool and smart people and also had a lot of fun.&lt;/p&gt;
-
-&lt;p&gt;At the conference I have met 3 libcloud contributors - &lt;a href='http://journal.paul.querna.org/'&gt;Paul&lt;/a&gt;, &lt;a href='http://jedsmith.org/'&gt;Jed&lt;/a&gt; and &lt;a href='http://agiletesting.blogspot.com/'&gt;Grig&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Paul, Jed and Grig only stayed there for the conference days, but I have also stayed there from 14th to 17th to lead the libcloud sprint.&lt;/p&gt;
-
-&lt;p&gt;Our sprinting team was pretty small - me, Paul (first day), Steven and &lt;a href='https://github.com/tavisrudd'&gt;Tavis&lt;/a&gt;, but we have still accomplished quite a lot.&lt;/p&gt;
-
-&lt;p&gt;Here is a short list of some of the things which have been accomplished during the sprints (some of them are still work in progress):&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Added a new &amp;#8220;pricing&amp;#8221; module and moved all the existing pricing info to a separate JSON file (&lt;em&gt;libcloud/data/pricing.json&lt;/em&gt;). Updating the prices for the providers which don&amp;#8217;t expose them through the API should now be a lot easier.&lt;/li&gt;
-
-&lt;li&gt;Paul has started initial work to port libcloud to Python 3&lt;/li&gt;
-
-&lt;li&gt;Steven has worked on the Amazon S3 storage driver which should be finished in the upcoming week&lt;/li&gt;
-
-&lt;li&gt;libcloud now works fine with Python 2.7 and PyPy (there have been some minor issues which have prevented some tests to pass on Python 2.7)&lt;/li&gt;
-
-&lt;li&gt;Test coverage has been increased for about 10%&lt;/li&gt;
-
-&lt;li&gt;I have started working on the Windows Azure storage driver&lt;/li&gt;
-
-&lt;li&gt;Tavis has worked on refactoring some of the existing modules, fixing styling issues and fixing bugs in CloudFiles storage driver&lt;/li&gt;
-
-&lt;li&gt;Finalized and committed two community submitted drivers; &lt;a href='http://en.wikipedia.org/wiki/Nimbus_(cloud_computing)'&gt;Nimbus&lt;/a&gt; driver by David LaBissoniere and &lt;a href='http://www.bluebox.net/'&gt;Bluebox&lt;/a&gt; driver by Christian Paredes&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;I have also talked with a few people which use the library and most of them would like us to expose more provider specific functionality - namely Amazon Elastic Block Storage and load balancers.&lt;/p&gt;
-
-&lt;p&gt;We have already debated a bit about this in the mailing list, but we haven&amp;#8217;t actually started working on it yet, because it&amp;#8217;s pretty hard to create a useful generic abstraction for resources like load balancers, IP addresses and so on.&lt;/p&gt;
-
-&lt;p&gt;You can expect more info and debates about this in the mailing list in the upcoming weeks.&lt;/p&gt;
-
-&lt;p&gt;I hope to see you again &lt;a href='http://us.pycon.org/2012/'&gt;next year in Santa Clara&lt;/a&gt; (there have been some debates about renting a beach house for the sprints - you definitely don&amp;#8217;t want to miss that!) and possibly this year at &lt;a href='http://ep2011.europython.eu/'&gt;EuroPython&lt;/a&gt; in Italy.&lt;/p&gt;</content>
 	</entry>
     
 </feed>

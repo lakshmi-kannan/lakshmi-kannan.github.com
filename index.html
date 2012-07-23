@@ -65,6 +65,110 @@ pageTracker._trackPageview();
             <div id="content">
                 
 <div class="post">
+    <h2 id='hosting_apt_repository_on_rackspace_cloudfiles'><a href='/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html'>Hosting APT repository on Rackspace CloudFiles</a></h2>
+
+<p>In this post I will describe how to host APT repository on <a href='http://www.rackspace.com/cloud/cloud_hosting_products/files/'>Rackspace Cloud Files</a>.</p>
+
+<p>First you need to create a CDN enabled container. You can do this using Libcloud or the new <a href='https://mycloud.rackspace.com'>Rackspace control panel</a>. Depending on how frequently you are going update your APT repository it is also recommended to lower the container TTL from the default value of 3 days to 900 seconds.</p>
+
+<p>After you have created a CDN enabled container you need to install Python script I wrote which allows you to sychronize files from a local directory to a container hosted in one of the Storage providers <a href='http://libcloud.apache.org/supported_providers.html'>supported by Libcloud</a>.</p>
+<div class='highlight'><pre><code class='console'><span class='go'>  sudo pip install file-syncer</span>
+</code></pre>
+</div>
+<p>Next we are going to create a dummy APT repository::</p>
+<div class='highlight'><pre><code class='console'><span class='go'>mkdir -p /tmp/apt-test/conf</span>
+<span class='go'>cat &gt; /tmp/apt-test/conf/distributions &lt;&lt;DELIM</span>
+<span class='go'>codename: precise</span>
+<span class='go'>Components: main</span>
+<span class='go'>Architectures: i386 amd64</span>
+<span class='go'>DELIM</span>
+</code></pre>
+</div>
+<p>Add a test package using <code>reprepro</code>:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>wget http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
+<span class='go'>reprepro -b /tmp/apt-test/ includedeb precise acpi_0.09-3ubuntu1_amd64.deb</span>
+</code></pre>
+</div>
+<p>And test the script:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>file-syncer --log-level=DEBUG --directory=/tmp/apt-test/ --username=your username --key=your api key --container-name=container name</span>
+</code></pre>
+</div>
+<p>If everything went well, you should see an output similar to this one:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>22 Jul 2012 22:36:05 : INFO     : Using provider: CloudFiles (US)</span>
+<span class='go'>22 Jul 2012 22:36:07 : DEBUG    : Found 15 local files</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Manifest doesn&#39;t exist, assuming that there are no remote files</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Found 0 remote files</span>
+<span class='go'>22 Jul 2012 22:36:08 : INFO     : To remove: 0, to upload: 15</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/contents.cache.db</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Release</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/packages.db</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/release.caches.db</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/version</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: conf/distributions</span>
+<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/references.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages.gz</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages.gz</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/release.caches.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: db/checksums.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Release</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Release</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: conf/distributions</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/Release</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/packages.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/contents.cache.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/references.db</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/version</span>
+<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
+<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages.gz</span>
+<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages.gz</span>
+<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: db/checksums.db</span>
+<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/Release</span>
+<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Release</span>
+<span class='go'>22 Jul 2012 22:36:11 : INFO     : Synchronization complete, took: 4.62 seconds</span>
+</code></pre>
+</div>
+<p>After the upload has finished, you can test the repository by adding it to your APT sources list:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>  echo &quot;deb http://c15173579.r79.cf2.rackcdn.com precise main&quot; | sudo tee -a /etc/apt/sources.list.d/test-api-repo.list</span>
+</code></pre>
+</div>
+<p>We are also going to disable APT HTTP request pipeling. This step is required, because a nginx proxy running in front of the CDN doesn&#8217;t seem to support HTTP/1.1 pipelining. If you skip this test apt-get update will still work, but it will get stuck on <code>[Waiting for headers]</code> for a longer period of time.</p>
+<div class='highlight'><pre><code class='console'><span class='go'>  echo &quot;Acquire::http::Pipeline-Depth &quot;0&quot;;&quot; | sudo tee -a /etc/apt/apt.conf.d/pipeline-workaround.conf</span>
+</code></pre>
+</div>
+<p>You can test that everything is working by issuing the following command:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>  sudo apt-get update ; sudo apt-cache policy acpi</span>
+</code></pre>
+</div>
+<p>You should get an output similar to this one:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>acpi:</span>
+<span class='go'>  Installed: (none)</span>
+<span class='go'>  Candidate: 1.6-1</span>
+<span class='go'>  Version table:</span>
+<span class='go'>     1.6-1 0</span>
+<span class='go'>        500 http://us.archive.ubuntu.com/ubuntu/ precise/universe amd64 Packages</span>
+<span class='go'>     0.09-3ubuntu1 0</span>
+<span class='go'>        500 http://c15173579.r79.cf2.rackcdn.com/ precise/main amd64 Packages</span>
+</code></pre>
+</div>
+<p>That is it. To make sure your container is always up to date, you need synchronize it every time you add a new packages. This can be achieved in multiple ways:</p>
+
+<ul>
+<li>adding a script which runs synchronize command after adding a package</li>
+
+<li>adding a cron job which periodically runs the sync command</li>
+</ul>
+    <div class="postfooter">
+        <div class="posttags">Tags: <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/apt.html">apt</a></div>
+        <div class="postdate">&raquo; <a href="/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html">Jul 22, 2012</a></div>
+    </div>
+</div>
+
+<div class="post">
     <h2 id='libcloud_update_april_2012__080_091_gsoc'><a href='/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html'>Libcloud Update (April 2012) - 0.8.0, 0.9.1, GSoC</a></h2>
 
 <p>Welcome to Libcloud April 2012 update post. Sorry for skipping a couple of months, but I have been pretty busy again. In any case, here is a short but sweet April update.</p>
@@ -80,7 +184,7 @@ pageTracker._trackPageview();
 
 <li>Libcloud has applied to <a href='http://www.google-melange.com/gsoc/homepage/google/gsoc2012'>Google Summer of Code 2012</a> under Apache organization. We have received 1 slot. Student Ilgiz Islamgulov will be working on the <a href='https://issues.apache.org/jira/browse/LIBCLOUD-159'>Libcloud REST interface</a> this summer.</li>
 </ul>
-<div class='imginline'><img class='inline' src='/images/dancing_robots.jpg' /><br />Dancing robots at PyCon<br /></div>
+<div class='imginline'><img src='/images/dancing_robots.jpg' class='inline' /><br />Dancing robots at PyCon<br /></div>
 <h3 id='what_is_currently_going_on'>What is currently going on</h3>
 
 <ul>
@@ -290,48 +394,6 @@ pageTracker._trackPageview();
     <div class="postfooter">
         <div class="posttags">Tags: <a href="/tags/nodejs.html">nodejs</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/testing.html">testing</a></div>
         <div class="postdate">&raquo; <a href="/2011/11/27/whiskey-now-with-more-goodness-introducing-process-runner.html">Nov 27, 2011</a></div>
-    </div>
-</div>
-
-<div class="post">
-    <h2 id='libcloud_monthly_update_september_2011__floss_weekly_openstack_driver_improvements_dns_api'><a href='/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html'>libcloud Monthly Update (September 2011) - FLOSS weekly, OpenStack driver improvements, DNS API</a></h2>
-
-<p>Without further ado here is a Libcloud monthly update for September 2011.</p>
-
-<h3 id='what_has_been_accomplished_in_the_past_month'>What has been accomplished in the past month</h3>
-
-<ul>
-<li>
-<p>I was a guest on FLOSS weekly (podcast about FOSS software) where I talked about Libcloud. You can find video and audio recording of the show on <a href='http://twit.tv/show/floss-weekly/181'>twit.tv</a>.</p>
-</li>
-
-<li>
-<p>OpenStack and Rackspace drivers have received a lot of needed attention and refactoring. Rackspace driver now properly inherits from the OpenStack one instead of vice versa (thanks <a href='https://issues.apache.org/jira/secure/ViewProfile.jspa?name=manganeez'>Mike</a>). This will make extending the Rackspace driver and developing other provider drivers which are based on OpenStack a lot easier. Rackspace drivers now also support authentication with Rackspace Auth 1.1.</p>
-</li>
-
-<li>
-<p>Linode compute driver now supports new location in Japan.</p>
-
-<p>Linode has recently <a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'>added a new location (Tokyo, Japan)</a> and this location is now also <a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'>supported in Libcloud</a>.</p>
-</li>
-
-<li>
-<p>DNS API development has finally started.</p>
-
-<p>Base API proposal can be found <a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmLfWki5awUqZL9ZNsrpJFkHNHAe00Vs5SeaJXkmWSxJ7g@mail.gmail.com%3E'>here</a>. I have also just finished a reference implementation and a first driver for the Linode DNS as a service. The driver can be found in <a href='https://svn.apache.org/viewvc/libcloud/trunk/libcloud/dns/drivers/linode.py?view=markup'>trunk</a>. Feedback is <a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmL7M12TG5eFz0HQ-kCuA3=ZnNkTt8_veoOFNfueaG9q2w@mail.gmail.com%3E'>welcome (and encouraged)</a>.</p>
-</li>
-</ul>
-
-<h3 id='what_is_currently_going_on'>What is currently going on</h3>
-
-<ul>
-<li>Hacking on the DNS API continues. DNS API with at least two drivers is planned to be included in the next release (0.6.0) which should be out around November.</li>
-</ul>
-
-<p>See you next month!</p>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/floss%20weekly.html">floss weekly</a></div>
-        <div class="postdate">&raquo; <a href="/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html">Sep 24, 2011</a></div>
     </div>
 </div>
 
