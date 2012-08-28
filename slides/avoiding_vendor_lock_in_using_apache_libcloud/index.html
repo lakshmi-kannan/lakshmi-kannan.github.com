@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<!--
+  Google HTML5 slide template
+
+  Authors: Luke Mahé (code)
+           Marcin Wichary (code and design)
+
+           Dominic Mazzoni (browser compatibility)
+           Charles Chen (ChromeVox support)
+
+  URL: http://code.google.com/p/html5slides/
+-->
+
+<html>
+  <head>
+    <title>Avoiding Vendor Lock-in Using Apache Libcloud</title>
+
+    <meta charset='utf-8'>
+    <script
+      src='./slides.js'></script>
+  </head>
+
+  <style>
+    /* Your individual styles here, or just use inline styles if that’s
+       what you want. */
+
+
+  </style>
+
+  <body style='display: none'>
+
+    <section class='slides layout-regular template-rax'>
+      <article>
+        <h1>
+          Avoiding Vendor Lock-In
+          <br>
+         Using Apache Libcloud
+        </h1>
+        <p>
+          Tomaz Muraus
+          <br/ >
+          tomaz@apache.org
+          <br/ >
+          Cloud Open 2012, San Diego, CA
+        </p>
+        </article>
+
+      <article>
+      <h3>Agenda</h3>
+        <ul>
+          <li>Who am I</li>
+          <li>What is Libcloud?</li>
+          <li>Why?</li>
+          <li>How it all started / History</li>
+          <li>Libcloud APIs</li>
+          <li>What is currently going on & plans for the future</li>
+          <li>Questions</li>
+        </ul>
+      </article>
+
+      <article>
+      <h3>Who am I</h3>
+        <ul>
+          <li>Tomaz Muraus, <a href="https://twitter.com/KamiSLO">@KamiSLO</a>,
+          <a href="https://plus.google.com/106838062648597435631/posts">+Tomaz Muraus</a></li>
+          <li>Github: <a href="https://github.com/Kami">github.com/Kami</a><li>
+          <li>Libcloud Project chair & committer</li>
+          <li>Engineer at Rackspace</li>
+          <li>Dude who likes open-standards and open-source</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>What is Libcloud?</h3>
+          <p class='centered' >“Libcloud is a Python library which abstracts
+differences between cloud provider APIs and
+allows users to manage their cloud resources
+(servers, storage, load-balancers, dns) using a
+unified and easy to use interface.”</p>
+      </article>
+
+      <article>
+        <h3>What is Libcloud?</h3>
+        <p>Turns this:</p>
+        <pre>from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+
+Cls = get_driver(Provider.RACKSPACE)
+driver = Cls('username', 'api key')
+
+size = driver.list_sizes()[0]
+images = driver.list_images()[0]
+
+node = driver.create_node(name='icanhasaserver', size=size,
+image=image)</pre>
+      </article>
+
+      <article>
+        <h3>What is Libcloud?</h3>
+        <p>Into this:</p>
+        <p>
+          <img class='centered' style='height: 500px' src='images/screenshot1.png'>
+        </p>
+      </article>
+
+      <article>
+        <h3>Why?</h3>
+        <ul>
+          <li>Cloud interoperability and standards are (mostly) a lie</li>
+          <li>Need for standardization
+            <ul>
+              <li>Different APIs</li>
+              <li>Different response formats (XML, JSON, text)</li>
+              <li>Different authentication methods</li>
+              <li>Different request signing mechanisms</li>
+            </ul>
+          </li>
+        </ul>
+      </article>
+
+      <article>
+      <h3>Why - different response formats (XML)</h3>
+      <pre>&lt;DescribeInstancesResponse
+xmlns=&quot;http://ec2.amazonaws.com/doc/2010-08-31/&quot;&gt;
+  &lt;requestId&gt;56d0fffa-8819-4658-bdd7-548f143a86d2&lt;/requestId&gt;
+  &lt;reservationSet&gt;
+    &lt;item&gt;
+      &lt;reservationId&gt;r-07adf66e&lt;/reservationId&gt;
+      &lt;instancesSet&gt;
+        &lt;item&gt;
+          &lt;instanceId&gt;i-4382922a&lt;/instanceId&gt;
+          &lt;imageId&gt;ami-0d57b264&lt;/imageId&gt;
+          &lt;instanceState&gt;
+            &lt;code&gt;0&lt;/code&gt;
+            &lt;name&gt;pending&lt;/name&gt;
+          &lt;/instanceState&gt;
+          &lt;privateDnsName/&gt;</pre>
+      </article>
+
+      <article>
+        <h3>Why - different response formats (text)</h3>
+        <pre>de:0:0:write:requests 466
+rx 760681
+vnc:password testpass
+ide:0:0 f0202f1c-0b4f-4cfc-8ae3-e30951d09ef0
+ide:0:0:read:requests 7467
+ide:0:0:read:bytes 165395968
+vnc:ip 178.22.66.28
+boot ide:0:0
+smp 1
+started 1286568422
+nic:0:model virtio
+status active
+user 93b34fd9-7986-4b25-8bfd-98a50383605d
+ide:0:0:media disk
+name cloudsigma node</pre>
+        </article>
+
+        <article>
+          <h3>Why - different response formats (JSON)</h3>
+          <pre>[
+    {
+        "ips": [
+            {
+                "address": "67.214.214.212"
+            }
+        ],
+        "memory": 1073741824,
+        "id": "99df878c-6e5c-4945-a635-d94da9fd3146",
+        "storage": 21474836480,
+        "hostname": "foo.apitest.blueboxgrid.com",
+        "description": "1 GB RAM + 20 GB Disk",
+        "cpu": 0.5,
+        "status": "running"
+    }
+]</pre>
+      </article>
+
+      <article>
+        <h3>Why - different authentication methods</h3>
+        <ul>
+          <li>Shared token / secret</li>
+          <li>HMAC base</li>
+          <li>HTTP basic / digest auth</li>
+          <li>X509 certificate based</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Apache Libcloud</h3>
+        <ul>
+          <li>Python library (pip install apache-libcloud)</a>
+          <li>Originally developed at Cloudkick in 2009</li>
+          <li>Later this year project joined Apache Incubator</li>
+          <li>Graduated to Apache TLP in May 2011</li>
+          <li>Current stable release is <a href="http://libcloud.apache.org/downloads.html">0.11.1</a></li>
+          <li>Similar libraries in other languages:
+            <ul>
+              <li><a href="http://fog.io/">Fog</a> (Ruby)</li>
+              <li><a href="http://www.jclouds.org/">jclouds</a> (Java)</li>
+              <li><a href="http://deltacloud.apache.org/">deltacloud</a></li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Apache Libcloud</h3>
+        <ul>
+          <li>Around ~5 active committers</li>
+          <li>A nice amount of contributions from the community</li>
+          <li>Mailing list: {users,dev}@libcloud.apache.org</li>
+          <li>IRC channel: #libcloud at freenode</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs</h3>
+        <ul>
+          <li>Compute</li>
+          <li>Storage</li>
+          <li>DNS</li>
+          <li>LoadBalancers</li>
+        </ul>
+        </article>
+
+      <article class="providers">
+      <h3>Libcloud APIs - Supported providers</h3>
+        <p>
+          <img class='centered' style='height: 500px' src='images/providers.png'>
+        </p>
+      </article>
+
+
+      <article>
+        <h3>Libcloud APIs - Compute</h3>
+        <ul>
+          <li>Allows users to manage VMs / cloud servers across more than 25 different providers.</li>
+          <li>Includes limited support for block storage (EBS, etc.) management</li>
+          <li>Supported services include: Amazon EC2, Rackspace Cloud Servers,
+          OpenStack, CloudStack, ...</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Compute - Example</h3>
+        <pre>import os
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+from libcloud.compute.deployment import MultiStepDeployment, ScriptDeployment, \
+SSHKeyDeployment
+
+conn = get_driver(Provider.RACKSPACE)('username', 'key')
+
+install_key = 
+SSHKeyDeployment(open(os.path.expanduser("~/.ssh/id_rsa.pub")).read())
+install_puppet = ScriptDeployment("apt-get -y install puppet")
+
+msd = MultiStepDeployment([install_key, install_puppet])
+
+image = conn.list_images()[0]
+size = conn.list_sizes()[0]
+
+node = conn.deploy_node(name='test', image=image, size=size,
+deploy=msd)</pre>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Storage</h3>
+        <ul>
+          <li>Allows users to manage cloud storage across 5 different providers.</li>
+          <li>Supported services include: Amazon S3, Rackspace Cloud Files, Google
+          Storage, OpenStack Swift</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Storage - Example</h3>
+        <pre>import subprocess
+from libcloud.storage.types import Provider
+from libcloud.storage.providers import get_driver
+
+driver = get_driver(Provider.CLOUDFILES_US)('username', 'key')
+
+directory = '/home/some/path'
+cmd = 'tar cvzpf - %s' % (directory)
+container = driver.create_container('backups')
+
+pipe = subprocess.Popen(cmd, bufsize=0, shell=True, stdout=subprocess.PIPE)
+return_code = pipe.poll()
+
+while return_code is None:
+    # Compress data in our directory and stream it directly to CF
+    container.upload_object_via_stream(iterator=pipe.stdout,
+                                       object_name='backup.tar.gz')
+    return_code = pipe.poll()
+print 'Upload complete'</pre>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Load-balancers</h3>
+        <ul>
+          <li>Allows users to manage cloud storage across 4 different providers.</li>
+          <li>Supported services: Rackspace LoadBalancers, CloudStack
+          LoadBalancers, ...</li>
+        </ul>
+        </article>
+
+      <article>
+      <h3>Libcloud APIs - Load-balancers - Example</h3>
+      <pre>driver = get_driver(Provider.RACKSPACE_US) Rackspace('username', 'api key')
+
+new_balancer = driver.create_balancer(name='test-lb',
+        algorithm=Algorithm.ROUND_ROBIN, port=80, protocol='http',
+members=(Member(None, '192.168.86.1', 8080),
+                 Member(None, '192.168.86.2', 8080)))
+
+# wait for the balancer to become ready
+while True:
+    balancer = driver.get_balancer(balancer_id=new_balancer.id)
+    if balancer.state == State.RUNNING:
+        break
+    time.sleep(20)
+
+# fetch list of members
+members = balancer.list_members()
+print members</pre>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - DNS</h3>
+        <ul>
+          <li>Allows users to manage DNS across 3 different providers.</li>
+          <li>Supported services: Zerigo DNS, Rackspace DNS, Linode DNS</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>What is currently going on & plans for the future</h3>
+        <ul>
+          <li>Libcloud REST - talk to Libcloud over HTTP</li>
+          <li>Improving pricing data distribution</li>
+          <li>Revamping the whole “location” concept</li>
+          <li>...</li>
+        </ul>
+      </article>
+
+      <article class="biglogo">
+        <h3>Rackspace (SF) is hiring</h3>
+        <ul>
+          <li>Python, Node.js, Lua, Ruby, Java, ...</li>
+          <li>Chef, Cassandra, ZooKeeper, Scribe, ...</li>
+          <li>Cloud, Big data, ...</li>
+          <li>We <3 open-source & cloud</li>
+          <li><a href="http://rackertalent.com/sanfrancisco/">http://rackertalent.com/sanfrancisco/</a></li>
+          <li><a href="http://github.com/racker/">http://github.com/racker/</a></li>
+          <li><a href="http://github.com/Rackspace/">http://github.com/Rackspace/</a></li>
+        </ul>
+      </article>
+
+      <article>
+        <h1>Thanks you & Questions</h1>
+        <ul>
+          <li>Website: <a href="http://libcloud.apache.org/">http://libcloud.apache.org</a></li>
+          <li>Docs: <a href="http://libcloud.apache.org/docs/">http://libcloud.apache.org/docs/</a>
+          <li>Mailing lists: <a href="http://libcloud.apache.org/devinfo.html">{users,dev}@libcloud.apache.org</a></li>
+          <li>IRC: #libcloud at irc.freenode.net</li>
+        </ul>
+      </article>
+    </section>
+  </body>
+</html>
