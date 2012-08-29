@@ -261,6 +261,20 @@ name cloudsigma node</pre>
       </article>
 
       <article>
+        <h3>Libcloud APIs - Compute - Base API</h3>
+        <ul>
+          <li>list_nodes</li>
+          <li>list_images</li>
+          <li>list_sizes</li>
+          <li>list_locations</li>
+          <li>create_node</li>
+          <li>deploy_node</li>
+          <li>reboot_node</li>
+          <li>destroy_node</li>
+        </ul>
+      </article>
+
+      <article>
         <h3>Libcloud APIs - Compute - Example</h3>
         <pre class="brush: python">import os
 from libcloud.compute.types import Provider
@@ -289,6 +303,23 @@ deploy=msd)</pre>
           <li>Supported services include: Amazon S3, Rackspace Cloud Files, Google
           Storage, OpenStack Swift</li>
         </ul>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Storage - Base API</h3>
+        <ul>
+          <li>list_containers</li>
+          <li>list_container_object</li>
+          <li>get_container</li>
+          <li>get_object</li>
+          <li>create_container</li>
+          <li>upload_object</li>
+          <li>upload_object_via_stream</li>
+          <li>download_object</li>
+          <li>download_object_as_stream</li>
+          <li>delete_container</li>
+          <li>delete_object</li>
+       </ul>
       </article>
 
       <article>
@@ -321,7 +352,22 @@ print 'Upload complete'</pre>
           <li>Supported services: Rackspace LoadBalancers, CloudStack
           LoadBalancers, ...</li>
         </ul>
-        </article>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - Load balancers - Base API</h3>
+        <ul>
+            <li>list_protocols</li>
+            <li>list_balancers</li>
+            <li>balancer_list_members</li>
+            <li>get_balancer</li>
+            <li>create_balancer</li>
+            <li>destroy_balancer</li>
+            <li>balancer_attach_member</li>
+            <li>balancer_attach_compute_node</li>
+            <li>balancer_detach_member</li>
+        </ul>
+      </article>
 
       <article>
       <h3>Libcloud APIs - Load balancers - Example</h3>
@@ -350,6 +396,23 @@ print members</pre>
         <ul>
           <li>Allows users to manage DNS across 3 different providers</li>
           <li>Supported services: Zerigo DNS, Rackspace DNS, Linode DNS</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Libcloud APIs - DNS - Base API</h3>
+        <ul>
+          <li>list_record_types<li>
+          <li>list_zones<li>
+          <li>list_records<li>
+          <li>get_zone<li>
+          <li>get_record<li>
+          <li>create_zone<li>
+          <li>update_zone<li>
+          <li>create_record<li>
+          <li>update_record<li>
+          <li>delete_zone<li>
+          <li>delete_record</li>
         </ul>
         </article>
 
@@ -396,7 +459,8 @@ pprint(created)</pre>
           <li>Python, Node.js, Lua, Ruby, Java, ...</li>
           <li>Chef, Cassandra, ZooKeeper, Scribe, ...</li>
           <li>Cloud, Big data, ...</li>
-          <li>We <3 open source & cloud</li>
+          <li>We <3 open source</li>
+          <li>We <3 cloud</li>
           <li><a href="http://rackertalent.com/sanfrancisco/">http://rackertalent.com/sanfrancisco/</a></li>
           <li><a href="http://github.com/racker/">http://github.com/racker/</a></li>
           <li><a href="http://github.com/Rackspace/">http://github.com/Rackspace/</a></li>
