@@ -110,7 +110,7 @@ body {
   background-color: white;  
 }
 
-.slides.template-rax > article:not(.nobackground):not(.biglogo) {
+.slides.template-rax > article:not(.nobackground):not(.biglogo):not(.cover) {
   /*background: white url(images/rax-logo-small.png) 825px 625px no-repeat;*/
   background: white url(images/asf-logo.jpg) 680px 615px no-repeat;
 }
@@ -174,10 +174,6 @@ body {
   background-size: 800px;
 }
 
-.slides.template-rax article.providers{
-  background: white url(images/providers.png) 50% 50% no-repeat;
-  background-size: 800px;
-}
 /* Slides */
 
 .slides > article {
