@@ -17,8 +17,13 @@
     <title>Avoiding Vendor Lock-in Using Apache Libcloud</title>
 
     <meta charset='utf-8'>
-    <script
-      src='./slides.js'></script>
+    <script src='./slides.js'></script>
+
+    <script src="./syntaxhighlighter/scripts/shCore.js" type="text/javascript"></script>
+    <script src="./syntaxhighlighter/scripts/shBrushPython.js" type="text/javascript"></script>
+
+    <link href="./syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+    <link href="./syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
   </head>
 
   <style>
@@ -27,8 +32,11 @@
 
 
   </style>
-
   <body style='display: none'>
+<script type="text/javascript">
+     SyntaxHighlighter.all()
+</script>
+
 
     <section class='slides layout-regular template-rax'>
       <article>
@@ -83,7 +91,7 @@ unified and easy to use interface.”</p>
       <article>
         <h3>What is Libcloud?</h3>
         <p>Turns this:</p>
-        <pre>from libcloud.compute.types import Provider
+        <pre class="brush: python">from libcloud.compute.types import Provider
 from libcloud.compute.providers import get_driver
 
 Cls = get_driver(Provider.RACKSPACE)
@@ -243,16 +251,15 @@ name cloudsigma node</pre>
 
       <article>
         <h3>Libcloud APIs - Compute - Example</h3>
-        <pre>import os
+        <pre class="brush: python">import os
 from libcloud.compute.types import Provider
 from libcloud.compute.providers import get_driver
-from libcloud.compute.deployment import MultiStepDeployment, ScriptDeployment, \
-SSHKeyDeployment
+from libcloud.compute.deployment import MultiStepDeployment, \
+ScriptDeployment, SSHKeyDeployment
 
 conn = get_driver(Provider.RACKSPACE)('username', 'key')
 
-install_key = 
-SSHKeyDeployment(open(os.path.expanduser("~/.ssh/id_rsa.pub")).read())
+install_key = SSHKeyDeployment(open(os.path.expanduser("~/.ssh/id_rsa.pub")).read())
 install_puppet = ScriptDeployment("apt-get -y install puppet")
 
 msd = MultiStepDeployment([install_key, install_puppet])
@@ -275,7 +282,7 @@ deploy=msd)</pre>
 
       <article>
         <h3>Libcloud APIs - Storage - Example</h3>
-        <pre>import subprocess
+        <pre class="brush: python">import subprocess
 from libcloud.storage.types import Provider
 from libcloud.storage.providers import get_driver
 
@@ -307,7 +314,8 @@ print 'Upload complete'</pre>
 
       <article>
       <h3>Libcloud APIs - Load balancers - Example</h3>
-      <pre>driver = get_driver(Provider.RACKSPACE_US) Rackspace('username', 'api key')
+      <pre class="brush: python">Cls = get_driver(Provider.RACKSPACE_US) 
+driver = Cls('username', 'api key')
 
 new_balancer = driver.create_balancer(name='test-lb',
         algorithm=Algorithm.ROUND_ROBIN, port=80, protocol='http',
