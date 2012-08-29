@@ -341,7 +341,34 @@ print members</pre>
           <li>Allows users to manage DNS across 3 different providers</li>
           <li>Supported services: Zerigo DNS, Rackspace DNS, Linode DNS</li>
         </ul>
-      </article>
+        </article>
+
+      <article>
+        <h3>Libcloud APIs - DNS - Example</h3>
+        <pre class="brush: python">from pprint import pprint
+
+from libcloud.compute.providers import get_driver as get_compute_driver
+from libcloud.compute.types import Provider as ComputeProvider
+from libcloud.dns.providers import get_driver as get_dns_driver
+from libcloud.dns.types import Provider as DNSProvider, RecordType
+
+compute_driver = get_dns_driver(DNSProvider.ZERIGO)('username', 'api key')
+dns_driver = get_dns_driver(DNSProvider.ZERIGO)('email', 'password')
+
+nodes = compute_driver.list_nodes()
+
+zone = dns_driver.create_zone(domain='mydomain2.com')
+
+created = []
+for node in nodes:
+    print 'Creating %s record (data=%s) for node %s' % ('A', ip, name)
+    record = zone.create_record(name=node.name, type=RecordType.A,
+                                data=node.public_ips[0])
+    created.append(record)
+
+print 'Done, created %d records' % (len(created))
+pprint(created)</pre>
+        </article>
 
       <article>
         <h3>What is currently going on & plans for the future</h3>
