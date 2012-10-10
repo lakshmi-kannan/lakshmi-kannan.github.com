@@ -1,4 +1,4 @@
-## Tomaž Muraus' blog
+## Lakshmi Kannan's blog
 
 Forked from [Daniel Schauenberg][1].
 All code is licensed under the MIT license:
