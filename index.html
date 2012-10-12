@@ -5,7 +5,7 @@
         <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
         <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
-        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="tomaz.me feed" />
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
         <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
         <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -19,7 +19,7 @@ pageTracker._trackPageview();
 </script>
 
 
-        <title>tomaz.me - thoughts which have made it into written existence</title>
+        <title>lakshmikannan.me - The good, the bad and the ugly</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
         <script type='text/javascript'>
@@ -31,7 +31,7 @@ pageTracker._trackPageview();
         </script>
     </head>
     <body>
-        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <a href="http://github.com/lakshmi-kannan"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
         <div id="links" class="menu">
             <ul class="nobullet">
                 <li><a href="/index.html">Home</a></li>
@@ -41,365 +41,21 @@ pageTracker._trackPageview();
 
                 <li><br /></li>
                 <li class="title">Find me on</li>
-                <li><a href="https://plus.google.com/106838062648597435631/about">Google plus</a></li>
-                <li><a href="http://twitter.com/KamiSLO">Twitter</a></li>
-                <li><a href="http://github.com/Kami">Github</a></li>
-                <li><a href="https://launchpad.net/~tomaz-muraus">Launchpad</a></li>
-                <li><a href="http://www.linkedin.com/in/tomazmuraus">LinkedIn</a></li>
-
-                <li><br /></li>
-                <li class="title">Friends and other blogs</li>
-                <li><a href="http://segv.net/">Ryan's site</a></li>
-                <li><a href="http://russellhaering.com/">Russell's blog</a></li>
-                <li><a href="http://journal.paul.querna.org/">Paul's journal</a></li>
-                <li><a href="http://geoff.greer.fm/">Geoff's site</a></li>
-                <li><a href="http://antirez.com/">antirez webblog</a></li>
-
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
             </ul>
         </div>
         <div id="wrapper">
             <div id="header">
                 <div class="logo"></div>
-                <h1><a href="/index.html">computers, programming, ponies and snakes.</a></h1>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
             </div>
             <div id="content">
-                
-<div class="post">
-    <h2 id='hosting_apt_repository_on_rackspace_cloudfiles'><a href='/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html'>Hosting APT repository on Rackspace CloudFiles</a></h2>
-
-<p>In this post I will describe how to host APT repository on <a href='http://www.rackspace.com/cloud/cloud_hosting_products/files/'>Rackspace Cloud Files</a>.</p>
-
-<p>First you need to create a CDN enabled container. You can do this using Libcloud or the new <a href='https://mycloud.rackspace.com'>Rackspace control panel</a>. Depending on how frequently you are going update your APT repository it is also recommended to lower the container TTL from the default value of 3 days to 900 seconds.</p>
-
-<p>After you have created a CDN enabled container you need to install Python script I wrote which allows you to sychronize files from a local directory to a container hosted in one of the Storage providers <a href='http://libcloud.apache.org/supported_providers.html'>supported by Libcloud</a>.</p>
-<div class='highlight'><pre><code class='console'><span class='go'>  sudo pip install file-syncer</span>
-</code></pre>
-</div>
-<p>Next we are going to create a dummy APT repository::</p>
-<div class='highlight'><pre><code class='console'><span class='go'>mkdir -p /tmp/apt-test/conf</span>
-<span class='go'>cat &gt; /tmp/apt-test/conf/distributions &lt;&lt;DELIM</span>
-<span class='go'>codename: precise</span>
-<span class='go'>Components: main</span>
-<span class='go'>Architectures: i386 amd64</span>
-<span class='go'>DELIM</span>
-</code></pre>
-</div>
-<p>Add a test package using <code>reprepro</code>:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>wget http://us.archive.ubuntu.com/ubuntu/ubuntu/ubuntu/pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
-<span class='go'>reprepro -b /tmp/apt-test/ includedeb precise acpi_0.09-3ubuntu1_amd64.deb</span>
-</code></pre>
-</div>
-<p>And test the script:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>file-syncer --log-level=DEBUG --directory=/tmp/apt-test/ --username=your username --key=your api key --container-name=container name</span>
-</code></pre>
-</div>
-<p>If everything went well, you should see an output similar to this one:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>22 Jul 2012 22:36:05 : INFO     : Using provider: CloudFiles (US)</span>
-<span class='go'>22 Jul 2012 22:36:07 : DEBUG    : Found 15 local files</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Manifest doesn&#39;t exist, assuming that there are no remote files</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Found 0 remote files</span>
-<span class='go'>22 Jul 2012 22:36:08 : INFO     : To remove: 0, to upload: 15</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/contents.cache.db</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Release</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/packages.db</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/release.caches.db</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/version</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: conf/distributions</span>
-<span class='go'>22 Jul 2012 22:36:08 : DEBUG    : Uploading object: db/references.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-i386/Packages.gz</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Packages.gz</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/release.caches.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: db/checksums.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Release</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/main/binary-amd64/Release</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: conf/distributions</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Uploading object: dists/precise/Release</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/packages.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/contents.cache.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/references.db</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: db/version</span>
-<span class='go'>22 Jul 2012 22:36:09 : DEBUG    : Object uploaded: pool/main/a/acpi/acpi_0.09-3ubuntu1_amd64.deb</span>
-<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Packages.gz</span>
-<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-i386/Packages.gz</span>
-<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: db/checksums.db</span>
-<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/Release</span>
-<span class='go'>22 Jul 2012 22:36:10 : DEBUG    : Object uploaded: dists/precise/main/binary-amd64/Release</span>
-<span class='go'>22 Jul 2012 22:36:11 : INFO     : Synchronization complete, took: 4.62 seconds</span>
-</code></pre>
-</div>
-<p>After the upload has finished, you can test the repository by adding it to your APT sources list:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>  echo &quot;deb http://c15173579.r79.cf2.rackcdn.com precise main&quot; | sudo tee -a /etc/apt/sources.list.d/test-api-repo.list</span>
-</code></pre>
-</div>
-<p>We are also going to disable APT HTTP request pipeling. This step is required, because a nginx proxy running in front of the CDN doesn&#8217;t seem to support HTTP/1.1 pipelining. If you skip this test apt-get update will still work, but it will get stuck on <code>[Waiting for headers]</code> for a longer period of time.</p>
-<div class='highlight'><pre><code class='console'><span class='go'>  echo &quot;Acquire::http::Pipeline-Depth &quot;0&quot;;&quot; | sudo tee -a /etc/apt/apt.conf.d/pipeline-workaround.conf</span>
-</code></pre>
-</div>
-<p>You can test that everything is working by issuing the following command:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>  sudo apt-get update ; sudo apt-cache policy acpi</span>
-</code></pre>
-</div>
-<p>You should get an output similar to this one:</p>
-<div class='highlight'><pre><code class='console'><span class='go'>acpi:</span>
-<span class='go'>  Installed: (none)</span>
-<span class='go'>  Candidate: 1.6-1</span>
-<span class='go'>  Version table:</span>
-<span class='go'>     1.6-1 0</span>
-<span class='go'>        500 http://us.archive.ubuntu.com/ubuntu/ precise/universe amd64 Packages</span>
-<span class='go'>     0.09-3ubuntu1 0</span>
-<span class='go'>        500 http://c15173579.r79.cf2.rackcdn.com/ precise/main amd64 Packages</span>
-</code></pre>
-</div>
-<p>That is it. To make sure your container is always up to date, you need synchronize it every time you add a new packages. This can be achieved in multiple ways:</p>
-
-<ul>
-<li>adding a script which runs synchronize command after adding a package</li>
-
-<li>adding a cron job which periodically runs the sync command</li>
-</ul>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/apt.html">apt</a></div>
-        <div class="postdate">&raquo; <a href="/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html">Jul 22, 2012</a></div>
-    </div>
-</div>
-
-<div class="post">
-    <h2 id='libcloud_update_april_2012__080_091_gsoc'><a href='/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html'>Libcloud Update (April 2012) - 0.8.0, 0.9.1, GSoC</a></h2>
-
-<p>Welcome to Libcloud April 2012 update post. Sorry for skipping a couple of months, but I have been pretty busy again. In any case, here is a short but sweet April update.</p>
-
-<h3 id='what_has_been_accomplished_in_the_past_few_months'>What has been accomplished in the past few months</h3>
-
-<ul>
-<li><a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201202.mbox/%3CCAJMHEmJJcigBO%2BZoSyxFGvc5Z37t-t3KKHBHyyMi7L-J4-Y03A%40mail.gmail.com%3E'>Libcloud 0.8.1</a> with support for compressed responses (gzip, deflate) has been released.</li>
-
-<li><a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201204.mbox/%3CCAJMHEmJzeGL%2BU1PNeX0T-1dcxUC1um88jQTAmskZ-mXTQ3QLGw%40mail.gmail.com%3E'>Libcloud 0.9.1</a> with improvements in deploy functionality and OpenStack driver has been released.</li>
-
-<li>I have attended <a href='https://us.pycon.org/2012/'>PyCon US 2012</a> in Santa Clara in March. As always, it was a lot of fun talking with old and meeting new friends. This year we didn&#8217;t hold a Libcloud development sprint, but I still managed to talk with some Libcloud users and prompted Libcloud at the AWS open space session.</li>
-
-<li>Libcloud has applied to <a href='http://www.google-melange.com/gsoc/homepage/google/gsoc2012'>Google Summer of Code 2012</a> under Apache organization. We have received 1 slot. Student Ilgiz Islamgulov will be working on the <a href='https://issues.apache.org/jira/browse/LIBCLOUD-159'>Libcloud REST interface</a> this summer.</li>
-</ul>
-<div class='imginline'><img src='/images/dancing_robots.jpg' class='inline' /><br />Dancing robots at PyCon<br /></div>
-<h3 id='what_is_currently_going_on'>What is currently going on</h3>
-
-<ul>
-<li>We are currently moving towards 1.0 release which means mostly polishing the code, fixing bugs and avoiding big and API breaking changes. A lot of code, especially compute API has already been battle tested, but there are still some parts which I want to see improved (deployment functionality for example) before releasing 1.0.</li>
-</ul>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/google%20summer%20of%20code.html">google summer of code</a></div>
-        <div class="postdate">&raquo; <a href="/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html">Apr 28, 2012</a></div>
-    </div>
-</div>
-
-<div class="post">
-    <h2 id='libcloud_monthly_update_december_2011__061_062_071_python_3'><a href='/2011/12/07/libcloud-montly-update-december-2011.html'>Libcloud Monthly Update (December 2011) - 0.6.1, 0.6.2, 0.7.1, Python 3</a></h2>
-
-<p>Past few months have been pretty busy here and you may have noticed that I didn&#8217;t post a monthly update post in the last two months. This doesn&#8217;t mean nothing has been going on though! In fact, quite the contrary. Last few months have been very busy and we have shipped two new releases and a voting thread for a new 0.7.1 release was just started a few days ago. More about that bellow.</p>
-
-<h3 id='what_has_been_accomplished_in_the_past_two_months'>What has been accomplished in the past two months</h3>
-
-<ul>
-<li><a href='http://mail-archives.apache.org/mod_mbox/www-announce/201111.mbox/%3CCAJMHEm+8XX704mSY4qw4P0YSBjGK=0SWCKjzSHBe8sLD__2UnA@mail.gmail.com%3E'>Libcloud 0.6.1</a> with a brand new DNS API (among many other improvements and additions) has been released.</li>
-
-<li>A few days after releasing 0.6.1 we have also released <a href='http://mail-archives.apache.org/mod_mbox/libcloud-users/201111.mbox/%3CCAJMHEmJTN407_JJRfnwDuJxNsWCupEGc0cXWxs=M-n8HoHoQKQ@mail.gmail.com%3E'>0.6.2</a> which was primary a bug-fix release, but it also includes some new features and improvements such as support for OpenStack Auth 2.0 API, support for new Amazon location (Oregon) and a CloudStack driver.</li>
-
-<li>A few weeks ago a new committer, Hutson Betts (hbetts) has <a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201111.mbox/%3CCAJMHEm+08-1MMCgHDZgULc+StDiwgR+_krVZvHOJF0odcU_OWg@mail.gmail.com%3E'>joined our team</a>. He has previously mostly contributed to the OpenNebula driver and we believe giving him commit access will allow him to contribute more directly and easily and is a good thing for the whole project.</li>
-</ul>
-
-<h3 id='what_is_currently_going_on'>What is currently going on</h3>
-
-<ul>
-<li>A lot of things!</li>
-
-<li>This weekend I have just finished adding support for Python 3 to Libcloud. Now we have a single code base which supports both, Python 2 and 3 and as far as I know we are the first Python cloud library which does that. I hope other projects will follow. If you are interested in more details you can read my post titled <a href='/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html'>Lessons learned while porting Libcloud to Python 3</a> where I have described some of the issues which I have encountered while porting the library. Armin has recently also wrote a good blog post about Python 3 which you should read - <a href='http://lucumr.pocoo.org/2011/12/7/thoughts-on-python3/'>Thoughts on Python 3</a>.</li>
-
-<li>I am moving to San Francisco where I will work full time for Rackspace. I will try to organize a Bay Area Libcloud meet-up in the upcoming weeks (hey, free pizza and beer!). I will post more info on the website and mailing list when all the details are fleshed out.</li>
-</ul>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a></div>
-        <div class="postdate">&raquo; <a href="/2011/12/07/libcloud-montly-update-december-2011.html">Dec 07, 2011</a></div>
-    </div>
-</div>
-
-<div class="post">
-    <h2 id='lessons_learned_while_porting_libcloud_to_python_3'><a href='/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html'>Lessons learned while porting Libcloud to Python 3</a></h2>
-
-<p>Yesterday after seeing and being inspired by the <a href='http://news.ycombinator.com/item?id=3305021'>Django Python 3 port</a> news, I have decided it&#8217;s finally time to port <a href='http://libcloud.apache.org/'>Libcloud</a> to Python 3. There have already been some talks about doing that in the past, but nobody actually managed to make a lot of progress.</p>
-
-<p>In general, our goal is pretty similar to the Django one - have a single code base which works with Python 2.5, 2.6, 2.7 / PyPy and Python 3.</p>
-
-<p>Alternative approach to having a single code base is using a tool like <a href='http://docs.python.org/library/2to3.html'>2to3</a> to automatically convert 2.x version to the 3.x one or having multiple code bases / branches - one for 2.x and one for 3.x.</p>
-
-<p>Early on when we talked about porting to Python 3, we have decided that we will go with a &#8220;single code base&#8221; approach. This approach allows us to keep a fast development pace and it&#8217;s also more friendlier for our users.</p>
-
-<p>In this post I will describe some of the issues which I have encountered while porting the library and how I have solved them.</p>
-
-<h2 id='1_handling_renamed_libraries_and_moved_functionality'>1. Handling renamed libraries and moved functionality</h2>
-
-<h3 id='httplib'>httplib</h3>
-
-<p>In Python 3 <code>httplib</code> has been renamed to <code>http.client</code>. To solve this problem, I have used an aliased import - <code>import http.client as httplib</code>.</p>
-
-<h3 id='urllib__urllib2'>urllib &amp; urllib2</h3>
-
-<p>All of the functionality from <code>urllib2</code> has been merged to <code>urllib</code>. This problem can also be easily solved using an aliased import - <code>import urllib as urllib2</code>.</p>
-
-<h3 id='urlparse'>urlparse</h3>
-
-<p>Functionality from <code>urlparse</code> has been moved to <code>urllib.parse</code>. We only use two functions from this module (quote and urlencode) so simple aliased import did the trick:</p>
-<div class='highlight'><pre><code class='python'><span class='kn'>from</span> <span class='nn'>urllib.parse</span> <span class='kn'>import</span> <span class='n'>quote</span> <span class='k'>as</span> <span class='n'>urlquote</span>
-<span class='kn'>from</span> <span class='nn'>urllib.parse</span> <span class='kn'>import</span> <span class='n'>urlencode</span> <span class='k'>as</span> <span class='n'>urlencode</span>
-</code></pre>
-</div>
-<h3 id='xmlrpclib'>xmlrpclib</h3>
-
-<p><code>xmlrpclib</code> has been moved to <code>xmlrpc.client</code>. Simple aliased import also solved this problem - <code>import xmlrpc.client as xmlrpclib</code>.</p>
-
-<h3 id='stringio'>StringIO</h3>
-
-<p><code>StringIO</code> has also been moved. <code>from io import StringIO</code> did the trick.</p>
-
-<h2 id='2__type_and_filelike_objects'>2. <code>file</code> type and file-like objects</h2>
-
-<p><code>file</code> type has been removed in Python 3. To resolve this problem, I have used code similar to the one bellow in the places where we use <code>file</code> type.</p>
-<div class='highlight'><pre><code class='python'><span class='k'>if</span> <span class='n'>PY3</span><span class='p'>:</span>
-    <span class='kn'>from</span> <span class='nn'>io</span> <span class='kn'>import</span> <span class='n'>FileIO</span> <span class='k'>as</span> <span class='nb'>file</span>
-
-<span class='k'>class</span> <span class='nc'>MyFileLikeObject</span><span class='p'>(</span><span class='nb'>file</span><span class='p'>):</span>
-    <span class='o'>...</span>
-</code></pre>
-</div>
-<h2 id='3_generators_and__method'>3. Generators and <code>.next()</code> method.</h2>
-
-<p>For consistency with other magic methods, <code>next</code> method in Python 3 has been renamed to <code>__next__</code>. To make it work with all the versions, I have used built-in <code>next</code> function in Python &gt;= 3 and object <code>.next()</code> method in older versions.</p>
-<div class='highlight'><pre><code class='python'><span class='k'>if</span> <span class='n'>sys</span><span class='o'>.</span><span class='n'>version_info</span> <span class='o'>&gt;=</span> <span class='p'>(</span><span class='mi'>3</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>):</span>
-    <span class='nb'>next</span> <span class='o'>=</span> <span class='n'>__builtins__</span><span class='p'>[</span><span class='s'>&#39;next&#39;</span><span class='p'>]</span>
-<span class='k'>else</span><span class='p'>:</span>
-    <span class='k'>def</span> <span class='nf'>next</span><span class='p'>(</span><span class='n'>i</span><span class='p'>):</span>
-        <span class='k'>return</span> <span class='n'>i</span><span class='o'>.</span><span class='n'>next</span><span class='p'>()</span>
-</code></pre>
-</div>
-<h2 id='4_exception_handling'>4. Exception handling</h2>
-
-<p>Sadly, there is no unified way to handle exceptions and extract the exception object in Python 2.5 and Python 3.x. This means I needed to use a hacky <code>sys.exc_info()[1]</code> approach to extract the raised exception</p>
-
-<p>Old code:</p>
-<div class='highlight'><pre><code class='python'><span class='k'>try</span><span class='p'>:</span>
-    <span class='n'>foo</span>
-<span class='k'>except</span> <span class='ne'>Exception</span><span class='p'>,</span> <span class='n'>e</span><span class='p'>:</span>
-    <span class='k'>print</span> <span class='n'>e</span>
-</code></pre>
-</div>
-<p>New code:</p>
-<div class='highlight'><pre><code class='python'><span class='k'>try</span><span class='p'>:</span>
-    <span class='n'>foo</span>
-<span class='k'>except</span> <span class='ne'>Exception</span><span class='p'>:</span>
-    <span class='n'>e</span> <span class='o'>=</span> <span class='n'>sys</span><span class='o'>.</span><span class='n'>exc_info</span><span class='p'>()[</span><span class='mi'>1</span><span class='p'>]</span>
-    <span class='k'>print</span> <span class='n'>e</span>
-</code></pre>
-</div>
-<p>One of the PyPy developers has <a href='http://www.reddit.com/r/Python/comments/mxufx/django_python_3_port_all_tests_now_pass_on_272/'>posted on reddit</a> that this approach is very slow in PyPy. Luckily, besides the tests, there aren&#8217;t many places in our code where we need access to the exception object so this should be a good compromise for now.</p>
-
-<h2 id='5_filter_map_dictkeys'>5. filter, map, dict.keys()</h2>
-
-<p>In Python 2 those functions return a <code>list</code>, but in Python 3 they return a special object. Compatibility can be preserved by casting a result from this function to a list - e.g. <code>list(filter(lamba x: x.name == &#39;test&#39;, nodes))</code>.</p>
-
-<h2 id='6_iteritems_xrange'>6. iteritems, xrange</h2>
-
-<p>In Python 3, <code>iteritems</code> method has been removed and functionality from <code>xrange</code> has been merged into <code>range</code>. I have simplify replaced <code>iteritems</code> with <code>items</code> and <code>xrange</code> with <code>range</code>. We never used <code>xrange</code> with a lot of values so storing a whole list in memory in Python 2.x shouldn&#8217;t be a huge deal.</p>
-
-<h2 id='7__and_encoding'>7. <code>xml.etree.ElementTree.tostring</code> and encoding</h2>
-
-<p>In Python 3 this method returns <a href='http://hg.python.org/cpython/rev/57e631f088d7/'>bytes by default</a>. To preserve the old behavior and get a string back, I have used a code similar to one bellow:</p>
-<div class='highlight'><pre><code class='python'><span class='k'>if</span> <span class='n'>PY3</span><span class='p'>:</span>
-    <span class='n'>encoding</span> <span class='o'>=</span> <span class='s'>&#39;unicode&#39;</span>
-<span class='k'>else</span><span class='p'>:</span>
-    <span class='n'>encoding</span> <span class='o'>=</span> <span class='bp'>None</span>
-
-<span class='n'>data</span> <span class='o'>=</span> <span class='n'>tostring</span><span class='p'>(</span><span class='n'>root</span><span class='p'>,</span> <span class='n'>encoding</span><span class='o'>=</span><span class='n'>encoding</span><span class='p'>)</span>
-</code></pre>
-</div>
-<h2 id='8_encodehex'>8. encode(&#8216;hex&#8217;)</h2>
-
-<p>We had multiple places in the code where we did something like this:</p>
-<div class='highlight'><pre><code class='python'><span class='n'>value</span> <span class='o'>=</span> <span class='n'>os</span><span class='o'>.</span><span class='n'>urandom</span><span class='p'>(</span><span class='mi'>8</span><span class='p'>)</span><span class='o'>.</span><span class='n'>encode</span><span class='p'>(</span><span class='s'>&#39;hex&#39;</span><span class='p'>)</span>
-</code></pre>
-</div>
-<p>Hex encoding has been removed from Python 3. I have preserved backward compatibility by using <code>binascii</code> module:</p>
-<div class='highlight'><pre><code class='python'><span class='n'>value</span> <span class='o'>=</span> <span class='n'>binascii</span><span class='o'>.</span><span class='n'>hexlify</span><span class='p'>(</span><span class='n'>os</span><span class='o'>.</span><span class='n'>urandom</span><span class='p'>(</span><span class='mi'>8</span><span class='p'>))</span>
-</code></pre>
-</div>
-<h2 id='9_octal_numbers'>9. Octal numbers</h2>
-
-<p>In Python 3 there is a special backward-incompatible (and strange) syntax for octal numbers - e.g. <code>0o755</code>. We only use octal number in one place and this has been easily resolved by using <code>int</code> to convert a string to a number with base 8 - <code>int(&#39;755&#39;, 8)</code>.</p>
-
-<p>Those are just some of the issues I have encountered during porting. If you want to view all of the issues and how I have resolved them, you can see a full diff <a href='https://github.com/apache/libcloud/compare/c995ea6b8b37d4bbec741a7d2d70b08da1c62f55...py3k'>here</a>.</p>
-
-<p>Overall, I&#8217;m pretty satisfied with the outcome. I have managed to keep most of the Python 2 and Python 3 compatibility code in a single module (<code>libcloud.py3</code>) and it probably took me less then 5 hours to do the whole port including the research.</p>
-
-<p>Bellow you can also find some links which I have found helpful while porting the code:</p>
-
-<ul>
-<li><a href='http://docs.python.org/library/2to3.html'>http://docs.python.org/library/2to3.html</a></li>
-
-<li><a href='http://docs.python.org/release/3.0.1/whatsnew/3.0.html'>http://docs.python.org/release/3.0.1/whatsnew/3.0.html</a></li>
-
-<li><a href='http://python3porting.com/differences.html'>http://python3porting.com/differences.html</a></li>
-
-<li><a href='http://www.voidspace.org.uk/python/articles/porting-mock-to-python-3.shtml'>http://www.voidspace.org.uk/python/articles/porting-mock-to-python-3.shtml</a></li>
-</ul>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/python.html">python</a>, <a href="/tags/python%203.html">python 3</a></div>
-        <div class="postdate">&raquo; <a href="/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html">Dec 03, 2011</a></div>
-    </div>
-</div>
-
-<div class="post">
-    <p>First a short-introduction for people who aren&#8217;t familiar with Whiskey.</p>
-
-<p><a href='https://github.com/cloudkick/whiskey'>Whiskey</a> is a powerful test runner for Node.js applications. It supports async testing, code coverage, scope leaks reporting, Makefile generation, test timing and lot more. Be sure to check out the <a href='https://github.com/cloudkick/whiskey'>github page</a> which lists all the features.</p>
-
-<p>New version (0.6.0) which has been released today includes a process runner and a support for managing external test dependencies. Test dependency is any kind of process on which the (integration) tests depend on.</p>
-
-<p>Examples include, but are not limited to:</p>
-
-<ul>
-<li>database,</li>
-
-<li>some kind of api server,</li>
-
-<li>web server,</li>
-
-<li>other external services</li>
-</ul>
-
-<p>Process runner is configured using a simple JSON configuration file. Most of the options have sane default values, which means if you don&#8217;t have any special requirements you can configure it very quickly.</p>
-
-<p>Example configuration file which we use for our monitoring system integration test suite at Rackspace can be found <a href='https://gist.github.com/5953e55ced30ef8a9581'>here</a>.</p>
-
-<p>Each process can also specify its dependencies in the <code>depends</code> option which allows Whiskey to start unrelated processes concurrently.</p>
-
-<p>Before Whiskey process runner was available we have been using <a href='http://www.scons.org/'>scons</a> for managing and running all the test dependencies. Test dependencies related section in our <code>SConstruct</code> file was long and hard to maintain which means switching to Whiskey process runner was a nice improvement.</p>
-
-<p>Process runner can be used by passing <code>--dependencies &lt;configuration_file_path.json&gt;</code> option to <code>whiskey</code> binary. By default all the dependencies specified in the configuration file are started, but there is also <code>--only-esential-dependencies</code> option available which will make Whiskey first inspect the test files and only start the processes which are required by the tests which will be ran.</p>
-
-<p>Each test file can specify on which processes it depends by exporting <code>dependencies</code> attribute. This attribute must be an array and contain the names of the processes as defined in the configuration file.</p>
-
-<p>If you have any questions or suggestions you can find me on #Node.js IRC channel on freenode (nick <code>Kami_</code>). If you find a bug or a problem you can also open an ticket on the project <a href='https://github.com/cloudkick/whiskey/issues'>issue tracker</a>.</p>
-    <div class="postfooter">
-        <div class="posttags">Tags: <a href="/tags/nodejs.html">nodejs</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/testing.html">testing</a></div>
-        <div class="postdate">&raquo; <a href="/2011/11/27/whiskey-now-with-more-goodness-introducing-process-runner.html">Nov 27, 2011</a></div>
-    </div>
-</div>
-
 
             </div>
         </div>
-        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank" title="Yeah, if you are a Pythonista don't get too excited, it's Ruby">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
     </body>
 </html>
