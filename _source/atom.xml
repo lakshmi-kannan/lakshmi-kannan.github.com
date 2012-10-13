@@ -10,8 +10,8 @@ layout: nil
 	<id>{{ site.url }}</id>
 	<updated>{{ site.time | date_to_xmlschema }}</updated>
 	<author>
-		<name>Tomaz Muraus</name>
-		<email>tomaz@tomaz.me</email>
+		<name>Lakshmi Kannan</name>
+		<email>lakshmi@lakshmikannan.me</email>
 	</author>
 
     {% for post in site.posts limit:10 %}

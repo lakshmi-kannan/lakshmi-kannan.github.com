@@ -28,7 +28,7 @@ source projects and communities.
 I work for [Rackspace](http://www.rackspace.com) where I'm currently help
 building and maintaining [next generation monitoring system][3].
 
-If you want to get in touch, you can email me at **tomaz at tomaz dot me**
+If you want to get in touch, you can email me at **lakshmi at lakshmikannan dot me**
 
 [1]: {{ page.url }}
 [2]: http://libcloud.apache.org
