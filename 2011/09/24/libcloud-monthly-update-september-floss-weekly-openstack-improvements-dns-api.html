@@ -19,7 +19,7 @@ pageTracker._trackPageview();
 </script>
 
 
-        <title>lakshmikannan.me - About</title>
+        <title>lakshmikannan.me - libcloud Monthly Update (September 2011) - FLOSS weekly, OpenStack driver improvements, DNS API</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
         <script type='text/javascript'>
@@ -54,16 +54,46 @@ pageTracker._trackPageview();
                 <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
             </div>
             <div id="content">
-                <div class="postdateheading">  </div>
+                <div class="postdateheading"> Sep 24, 2011 </div>
 <div class="postcontent">
-    <h2 id='about'><a href='/about.html'>About</a></h2>
+    <h2 id='libcloud_monthly_update_september_2011__floss_weekly_openstack_driver_improvements_dns_api'><a href='/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html'>libcloud Monthly Update (September 2011) - FLOSS weekly, OpenStack driver improvements, DNS API</a></h2>
 
-<p>I am Lakshmi Kannan and I am a Software Developer with Rackspace working on <a href='http://www.rackspace.com/cloud/cloud_hosting_products/monitoring/'>cloud monitoring</a>.</p>
+<p>Without further ado here is a Libcloud monthly update for September 2011.</p>
 
-<p>If you want to get in touch, you can email me at <strong>lakshmi at lakshmikannan dot me</strong></p>
+<h3 id='what_has_been_accomplished_in_the_past_month'>What has been accomplished in the past month</h3>
+
+<ul>
+<li>
+<p>I was a guest on FLOSS weekly (podcast about FOSS software) where I talked about Libcloud. You can find video and audio recording of the show on <a href='http://twit.tv/show/floss-weekly/181'>twit.tv</a>.</p>
+</li>
+
+<li>
+<p>OpenStack and Rackspace drivers have received a lot of needed attention and refactoring. Rackspace driver now properly inherits from the OpenStack one instead of vice versa (thanks <a href='https://issues.apache.org/jira/secure/ViewProfile.jspa?name=manganeez'>Mike</a>). This will make extending the Rackspace driver and developing other provider drivers which are based on OpenStack a lot easier. Rackspace drivers now also support authentication with Rackspace Auth 1.1.</p>
+</li>
+
+<li>
+<p>Linode compute driver now supports new location in Japan.</p>
+
+<p>Linode has recently <a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'>added a new location (Tokyo, Japan)</a> and this location is now also <a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'>supported in Libcloud</a>.</p>
+</li>
+
+<li>
+<p>DNS API development has finally started.</p>
+
+<p>Base API proposal can be found <a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmLfWki5awUqZL9ZNsrpJFkHNHAe00Vs5SeaJXkmWSxJ7g@mail.gmail.com%3E'>here</a>. I have also just finished a reference implementation and a first driver for the Linode DNS as a service. The driver can be found in <a href='https://svn.apache.org/viewvc/libcloud/trunk/libcloud/dns/drivers/linode.py?view=markup'>trunk</a>. Feedback is <a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmL7M12TG5eFz0HQ-kCuA3=ZnNkTt8_veoOFNfueaG9q2w@mail.gmail.com%3E'>welcome (and encouraged)</a>.</p>
+</li>
+</ul>
+
+<h3 id='what_is_currently_going_on'>What is currently going on</h3>
+
+<ul>
+<li>Hacking on the DNS API continues. DNS API with at least two drivers is planned to be included in the next release (0.6.0) which should be out around November.</li>
+</ul>
+
+<p>See you next month!</p>
 </div>
 <div class="postfooter">
-    <div class="posttags">Tags: <a href="/tags/page.html">page</a></div>
+    <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/floss%20weekly.html">floss weekly</a></div>
 </div>
 
             </div>

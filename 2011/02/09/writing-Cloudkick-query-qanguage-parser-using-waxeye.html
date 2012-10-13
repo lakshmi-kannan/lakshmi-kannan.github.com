@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - Writing Cloudkick Query Language parser using Waxeye</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Feb 09, 2011 </div>
+<div class="postcontent">
+    <h2 id='writing_cloudkick_query_language_parser_using_waxeye'><a href='/2011/02/09/writing-Cloudkick-query-qanguage-parser-using-waxeye.html'>Writing Cloudkick Query Language parser using Waxeye</a></h2>
+
+<p>First, some background.</p>
+
+<p>At <a href='https://www.cloudkick.com'>Cloudkick</a> we use a special query language that allows users to filter a set of nodes on which the agent checks are applied. It is also used on the dashboard where it helps users find nodes quickly.</p>
+
+<p>This query language is simple and powerful, allowing for the construction of complex queries with parenthesis and negated expressions. Specific details are available on <a href='https://support.cloudkick.com/Monitor_Setup#Identifying_monitor_targets'>our wiki</a>. We encourage users to write simple queries as with most of the other things - simple is almost always better.</p>
+
+<p>I helped develop the Python based parser which we currently use and powers the query language. This parser generates tokens from a user&#8217;s query, using them to construct a new query which is then sent to Solr (among other things, we use Solr to index node documents). Details about Solr query generation are not important for this post, but I have mentioned them so you get the whole picture.</p>
+
+<p>The current parser is not perfect, but for the most of the times, it works.</p>
+
+<p>Recently we have stumbled across <a href='http://waxeye.org/'>Waxeye</a>. <a href='http://waxeye.org/'>Waxeye</a> is an easy to use parser generator, which among other languages also supports Python and JavaScript. This is perfect for us because adding auto-complete support for queries on the frontend is on our road-map. Thanks to Waxeye we will not need to develop another parser in JavaScript and will only have to maintain a single grammar file.</p>
+
+<p>Since the parser generator looks easy to use and is pretty cool, I have dedicated myself to write a simple grammar for our query language which is available on <a href='https://github.com/Kami/cloudkick-query-language-parser/blob/master/query_language.waxeye'>github</a>. Please keep in mind that what is available now is not the final result; it is just a quick thing I wrote while playing with Waxeye.</p>
+
+<p>Since the parser makes a lot of function calls and there is also a lot of looping going on I was curious how it would perform with <a href='http://codespeak.net/pypy/dist/pypy/doc/'>PyPy</a> - after all there are a lot of function calls to in-line and some of the loops should probably be JIT-ed as well.</p>
+
+<p>I decided to make a quick and very unscientific benchmark (although, I don&#8217;t think my benchmarks are any worse than all the &#8220;NodeJS is faster than &#60;enter your favorite web server name here&#62;&#8221; benchmarks which have started to appear in the past year or so).</p>
+
+<p>The code used to perform benchmarks is located <a href='https://gist.github.com/818383'>on github</a>, <a href='https://gist.github.com/818385'>as is the parser code</a> generated by Waxeye.</p>
+
+<p>PyPy needed on average <strong>1.71 seconds</strong> to complete <strong>100 iterations</strong> and CPython only needed <strong>0.61 seconds</strong>, which means, that in this case, PyPy was almost 3 times slower.</p>
+
+<p>In the second benchmark I decided to ramp up the loop iteration count to <strong>1000</strong>. In this case, PyPy completed on average in <strong>5.81 seconds</strong> and CPython in <strong>5.97 seconds</strong> - here PyPy beat CPython, but only by a fraction.</p>
+
+<p>The raw results can be found <a href='https://gist.github.com/818386'>here</a>.</p>
+
+<p>I can imagine the difference would be a lot bigger (in favor of PyPy) if I bump the iteration count even further, but I was only interested about a real world example and not about some unrealistic (in our case), high number of iterations.</p>
+
+<p>So for our specific case and code, it looks like that using PyPy would not bring us speed improvements.</p>
+
+<p><strong>Update</strong>: Alex Gaynor has emailed and asked me which version of PyPy I have used, because he could not replicate the results using the latest nightly build.</p>
+
+<p>He also said that changing the classes to a new style should speed things up, so I have made <a href='https://gist.github.com/818386'>another set of benchmarks</a>, this time using the latest nightly build (<strong>PyPy 1.5.0-alpha0</strong>) and I have changed all the parser classes so now they inherit from the base object class.</p>
+
+<p>So yes, when using the latest nightly build and new style classes, PyPy beat CPython for about <strong>0.5 seconds</strong>.</p>
+
+<p>It is also nice see to see such a quick response from the PyPy team, so definitely thumbs for them.</p>
+
+<p><strong>Update 2</strong>: Here is a table with all the results:</p>
+<div style='text-align:center;'>
+<table style='width: 90%;margin-left:5%; margin-right:5%;'>
+<tr>
+  <th># of iterations</th>
+  <th>CPython 2.6.6 (new style classes)</th>
+  <th>PyPy 1.4.1 (old style classes)</th>
+  <th>PyPy 1.5.0-alpha0 (new style classes)</th>
+</tr>
+<tr>
+  <td>100</td>
+  <td><strong>0.557 seconds</strong></td>
+  <td>1.719 seconds</td>
+  <td>1.813 seconds</td>
+</tr>
+<tr>
+  <td>1000</td>
+  <td>5.476 seconds</td>
+  <td>5.818 seconds</td>
+  <td><strong>5.0134  seconds</strong></td>
+</tr>
+</table>
+</div><br />
+<p>P.S. #1: I forgot to add that I have emailed the author with some questions about Waxeye and he was very kind and responsive and has answered all my questions and even posted some suggestions how to improve our parse - I thank him for that.</p>
+
+<p>P.S #2. If you develop parsers as a hobby or you enjoy developing scalable solutions in Python or JavaScript (NodeJS), you should check out <a href='http://jobs.rackspace.com/search?q=%22san+francisco%22'>this page</a>.</p>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/programming.html">programming</a>, <a href="/tags/pypy.html">pypy</a>, <a href="/tags/waxeye.html">waxeye</a>, <a href="/tags/parser%20generators.html">parser generators</a>, <a href="/tags/cloudkick.html">cloudkick</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - Whiskey Node.js test runner now with more goodness - introducing process runner</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Nov 27, 2011 </div>
+<div class="postcontent">
+    <p>First a short-introduction for people who aren&#8217;t familiar with Whiskey.</p>
+
+<p><a href='https://github.com/cloudkick/whiskey'>Whiskey</a> is a powerful test runner for Node.js applications. It supports async testing, code coverage, scope leaks reporting, Makefile generation, test timing and lot more. Be sure to check out the <a href='https://github.com/cloudkick/whiskey'>github page</a> which lists all the features.</p>
+
+<p>New version (0.6.0) which has been released today includes a process runner and a support for managing external test dependencies. Test dependency is any kind of process on which the (integration) tests depend on.</p>
+
+<p>Examples include, but are not limited to:</p>
+
+<ul>
+<li>database,</li>
+
+<li>some kind of api server,</li>
+
+<li>web server,</li>
+
+<li>other external services</li>
+</ul>
+
+<p>Process runner is configured using a simple JSON configuration file. Most of the options have sane default values, which means if you don&#8217;t have any special requirements you can configure it very quickly.</p>
+
+<p>Example configuration file which we use for our monitoring system integration test suite at Rackspace can be found <a href='https://gist.github.com/5953e55ced30ef8a9581'>here</a>.</p>
+
+<p>Each process can also specify its dependencies in the <code>depends</code> option which allows Whiskey to start unrelated processes concurrently.</p>
+
+<p>Before Whiskey process runner was available we have been using <a href='http://www.scons.org/'>scons</a> for managing and running all the test dependencies. Test dependencies related section in our <code>SConstruct</code> file was long and hard to maintain which means switching to Whiskey process runner was a nice improvement.</p>
+
+<p>Process runner can be used by passing <code>--dependencies &lt;configuration_file_path.json&gt;</code> option to <code>whiskey</code> binary. By default all the dependencies specified in the configuration file are started, but there is also <code>--only-esential-dependencies</code> option available which will make Whiskey first inspect the test files and only start the processes which are required by the tests which will be ran.</p>
+
+<p>Each test file can specify on which processes it depends by exporting <code>dependencies</code> attribute. This attribute must be an array and contain the names of the processes as defined in the configuration file.</p>
+
+<p>If you have any questions or suggestions you can find me on #Node.js IRC channel on freenode (nick <code>Kami_</code>). If you find a bug or a problem you can also open an ticket on the project <a href='https://github.com/cloudkick/whiskey/issues'>issue tracker</a>.</p>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/nodejs.html">nodejs</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/testing.html">testing</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>

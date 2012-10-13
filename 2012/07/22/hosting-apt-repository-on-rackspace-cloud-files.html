@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - Hosting APT repository on Rackspace CloudFiles</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Jul 22, 2012 </div>
+<div class="postcontent">
+    <h2 id='hosting_apt_repository_on_rackspace_cloudfiles'><a href='/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html'>Hosting APT repository on Rackspace CloudFiles</a></h2>
+
+<p>In this post I will describe how to host APT repository on <a href='http://www.rackspace.com/cloud/cloud_hosting_products/files/'>Rackspace Cloud Files</a>.</p>
+
+<p>First you need to create a CDN enabled container. You can do this using Libcloud or the new <a href='https://mycloud.rackspace.com'>Rackspace control panel</a>. Depending on how frequently you are going update your APT repository it is also recommended to lower the container TTL from the default value of 3 days to 900 seconds.</p>
+
+<p>After you have created a CDN enabled container you need to install Python script I wrote which allows you to sychronize files from a local directory to a container hosted in one of the Storage providers <a href='http://libcloud.apache.org/supported_providers.html'>supported by Libcloud</a>.</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>Next we are going to create a dummy APT repository::</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>Add a test package using <code>reprepro</code>:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>And test the script:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>If everything went well, you should see an output similar to this one:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>After the upload has finished, you can test the repository by adding it to your APT sources list:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>We are also going to disable APT HTTP request pipeling. This step is required, because a nginx proxy running in front of the CDN doesn&#8217;t seem to support HTTP/1.1 pipelining. If you skip this test apt-get update will still work, but it will get stuck on <code>[Waiting for headers]</code> for a longer period of time.</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>You can test that everything is working by issuing the following command:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>You should get an output similar to this one:</p>
+
+<p>Liquid error: No such file or directory - posix_spawnp</p>
+
+<p>That is it. To make sure your container is always up to date, you need synchronize it every time you add a new packages. This can be achieved in multiple ways:</p>
+
+<ul>
+<li>adding a script which runs synchronize command after adding a package</li>
+
+<li>adding a cron job which periodically runs the sync command</li>
+</ul>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a>, <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/apt.html">apt</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>

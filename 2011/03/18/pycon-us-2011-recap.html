@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - PyCon US 2011 recap</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Mar 18, 2011 </div>
+<div class="postcontent">
+    <h2 id='pycon_us_2011_recap'><a href='/2011/03/18/pycon-us-2011-recap.html'>PyCon US 2011 recap</a></h2>
+
+<p>PyCon has officially finished yesterday. It has been a great week. I have met a lot of cool and smart people and also had a lot of fun.</p>
+
+<p>At the conference I have met 3 libcloud contributors - <a href='http://journal.paul.querna.org/'>Paul</a>, <a href='http://jedsmith.org/'>Jed</a> and <a href='http://agiletesting.blogspot.com/'>Grig</a>.</p>
+
+<p>Paul, Jed and Grig only stayed there for the conference days, but I have also stayed there from 14th to 17th to lead the libcloud sprint.</p>
+
+<p>Our sprinting team was pretty small - me, Paul (first day), Steven and <a href='https://github.com/tavisrudd'>Tavis</a>, but we have still accomplished quite a lot.</p>
+
+<p>Here is a short list of some of the things which have been accomplished during the sprints (some of them are still work in progress):</p>
+
+<ul>
+<li>Added a new &#8220;pricing&#8221; module and moved all the existing pricing info to a separate JSON file (<em>libcloud/data/pricing.json</em>). Updating the prices for the providers which don&#8217;t expose them through the API should now be a lot easier.</li>
+
+<li>Paul has started initial work to port libcloud to Python 3</li>
+
+<li>Steven has worked on the Amazon S3 storage driver which should be finished in the upcoming week</li>
+
+<li>libcloud now works fine with Python 2.7 and PyPy (there have been some minor issues which have prevented some tests to pass on Python 2.7)</li>
+
+<li>Test coverage has been increased for about 10%</li>
+
+<li>I have started working on the Windows Azure storage driver</li>
+
+<li>Tavis has worked on refactoring some of the existing modules, fixing styling issues and fixing bugs in CloudFiles storage driver</li>
+
+<li>Finalized and committed two community submitted drivers; <a href='http://en.wikipedia.org/wiki/Nimbus_(cloud_computing)'>Nimbus</a> driver by David LaBissoniere and <a href='http://www.bluebox.net/'>Bluebox</a> driver by Christian Paredes</li>
+</ul>
+
+<p>I have also talked with a few people which use the library and most of them would like us to expose more provider specific functionality - namely Amazon Elastic Block Storage and load balancers.</p>
+
+<p>We have already debated a bit about this in the mailing list, but we haven&#8217;t actually started working on it yet, because it&#8217;s pretty hard to create a useful generic abstraction for resources like load balancers, IP addresses and so on.</p>
+
+<p>You can expect more info and debates about this in the mailing list in the upcoming weeks.</p>
+
+<p>I hope to see you again <a href='http://us.pycon.org/2012/'>next year in Santa Clara</a> (there have been some debates about renting a beach house for the sprints - you definitely don&#8217;t want to miss that!) and possibly this year at <a href='http://ep2011.europython.eu/'>EuroPython</a> in Italy.</p>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/conferences.html">conferences</a>, <a href="/tags/pycon.html">pycon</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - libcloud Monthly Update (January 2011) - libcloud 0.4.2, Storage API, Pycon</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Jan 25, 2011 </div>
+<div class="postcontent">
+    <h2 id='libcloud_monthly_update_january_2011__libcloud_042_storage_api_pycon'><a href='/2011/01/25/libcloud-monthly-update-january-2011-libcloud-0-4-2-storage-api-pycon.html'>libcloud Monthly Update (January 2011) - libcloud 0.4.2, Storage API, Pycon</a></h2>
+
+<p>Recently I have joined the libcloud team as a committer and I have decide to write a short status update post each month (actually, <a href='http://antirez.com/post/redis-weekly-update-1.html'>Redis weekly</a> has inspired me to post something like this - our posts won&#8217;t be so low-level but more of a general view of what&#8217;s going on with the project).</p>
+<div style='text-align: center;'><a target='_blank' href='http://incubator.apache.org/libcloud/'><img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /></a></div>
+<p>The post will summarize what was accomplished in the previous month, what is currently going on and what you can expect in the upcoming months.</p>
+
+<p>I am going to start with an update for the January 2011.</p>
+
+<h3 id='what_has_been_accomplished_in_january_2011'>What has been accomplished in January 2011:</h3>
+
+<ul>
+<li>libcloud is back to Twitter, new account name is <a href='http://twitter.com/#!/libcloud'>@libcloud</a></li>
+
+<li>libcloud <strong>0.4.2</strong> has <a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201101.mbox/%3C9A2A5D8D-423C-42B2-94AA-606489483FA3@apache.org%3E'>finally been released</a>, some notable features are:</li>
+
+<li>new drivers for <a href='http://cloudsigma.com/'>CloudSigma</a>, <a href='http://www.brightbox.co.uk/'>Brightbox</a> and <a href='http://www.rackspacecloud.co.uk'>Rackspace UK</a></li>
+
+<li>availability zone support for the EC2 driver - now you can select an availability zone when booting an EC2 node</li>
+
+<li>improvements to deployment capabilities</li>
+
+<li>libcloud.security module for SSL certificate verification - actually it&#8217;s pretty sad that we needed to implement this ourselves, but since Python 2.5 / Python 2.6 does not provide this functionality, this was our only option (actually, we could use a library like <a href='http://wiki.python.org/moin/M2Crypto'>M2Crypto</a>, but we don&#8217;t want to introduce another external dependency). For more information about setting it up, read <a href='http://wiki.apache.org/incubator/LibcloudSSL'>this wiki entry</a> and <a href='http://agiletesting.blogspot.com/2011/01/libcloud-042-and-ssl.html'>this blog post</a>.</li>
+
+<li>Minimum supported version has changed from Python 2.4 to Python 2.5</li>
+</ul>
+<br />
+<h3 id='what_is_currently_going_on'>What is currently going on:</h3>
+
+<ul>
+<li>cluster instance support has been <a href='https://svn.apache.org/viewvc/incubator/libcloud/trunk/libcloud/drivers/ec2.py?r1=1056498&amp;r2=1062725&amp;diff_format=h'>added to the EC2 driver</a> - that is not really a killer feature, but it&#8217;s still a nice to have :-)</li>
+
+<li>debate about the <a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201101.mbox/%3CAANLkTi=g=4iBw2etBxJ1FYCwitnj_ZZFtmz=5ij5+pEX@mail.gmail.com%3E'>&#8220;driver maintainer status&#8221; on the mailing list</a></li>
+
+<li>hacking has started on the Storage API (<a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201101.mbox/%3CAANLkTi=3Ct8fTMkTSFChTk_tEP0+1TiCfZ_4azUxE8xs@mail.gmail.com%3E'>libcloud storage API proposal &amp; ideas thread</a>, <a href='http://wiki.apache.org/incubator/LibcloudStorageAPI'>wiki entry</a>) - this is a pretty major feature so you are encouraged to join our mailing list and participate with your ideas, feedback and suggestions</li>
+</ul>
+<br />
+<p>Library will eventually be split into two modules; &#8221;<strong>compute</strong>&#8221; (current drivers and deployment capabilities will be moved there) and &#8221;<strong>storage</strong>&#8221; (in development) - don&#8217;t worry, we are working hard to not break the existing functionality so you will still be able to use your old code with a new version without any major changes.</p>
+
+<p>This feature is planned to be included in the next release of libcloud (<strong>0.5.0</strong>).</p>
+
+<h3 id='what_is_going_on_in_the_upcoming_months'>What is going on in the upcoming months:</h3>
+
+<ul>
+<li>Me (Tomaz), <a href='http://journal.paul.querna.org/'>Paul</a> and <a href='http://twitter.com/#!/jcsalterego'>Jerry</a> will be at <a href='http://us.pycon.org/2011/about/'>Pycon</a> in March so if you will be there as well, feel free to contact us, we&#8217;d love to talk!</li>
+</ul>
+<br />
+<p>That is it, see you next month (in the mean time, don&#8217;t forget to join us at our mailing lists - <strong>libcloud@incubator.apache.org</strong> or IRC channel <strong>#libcloud @ freenode</strong>).</p>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>

@@ -1,14 +1,561 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>http://www.lakshmikannan.me</title>
-	<subtitle>computers, programming, ponies and snakes.</subtitle>
+	<subtitle>The good, the bad and the ugly.</subtitle>
 	<link href="http://www.lakshmikannan.me" rel="self" />
 	<link href="http://www.lakshmikannan.me" />
 	<id>http://www.lakshmikannan.me</id>
-	<updated>2012-07-22T23:06:31-07:00</updated>
+	<updated>2012-10-13T14:58:45-07:00</updated>
 	<author>
 		<name>Lakshmi Kannan</name>
 		<email>lakshmi@lakshmikannan.me</email>
 	</author>
 
+    
+	<entry>
+		<title>Hosting APT repository on Rackspace CloudFiles</title>
+        <link href="http://www.lakshmikannan.me/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html" />
+        <id>http://www.lakshmikannan.me/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html</id>
+		<updated>2012-07-22T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='hosting_apt_repository_on_rackspace_cloudfiles'&gt;&lt;a href='/2012/07/22/hosting-apt-repository-on-rackspace-cloud-files.html'&gt;Hosting APT repository on Rackspace CloudFiles&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;In this post I will describe how to host APT repository on &lt;a href='http://www.rackspace.com/cloud/cloud_hosting_products/files/'&gt;Rackspace Cloud Files&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;First you need to create a CDN enabled container. You can do this using Libcloud or the new &lt;a href='https://mycloud.rackspace.com'&gt;Rackspace control panel&lt;/a&gt;. Depending on how frequently you are going update your APT repository it is also recommended to lower the container TTL from the default value of 3 days to 900 seconds.&lt;/p&gt;
+
+&lt;p&gt;After you have created a CDN enabled container you need to install Python script I wrote which allows you to sychronize files from a local directory to a container hosted in one of the Storage providers &lt;a href='http://libcloud.apache.org/supported_providers.html'&gt;supported by Libcloud&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;Next we are going to create a dummy APT repository::&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;Add a test package using &lt;code&gt;reprepro&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;And test the script:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;If everything went well, you should see an output similar to this one:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;After the upload has finished, you can test the repository by adding it to your APT sources list:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;We are also going to disable APT HTTP request pipeling. This step is required, because a nginx proxy running in front of the CDN doesn&amp;#8217;t seem to support HTTP/1.1 pipelining. If you skip this test apt-get update will still work, but it will get stuck on &lt;code&gt;[Waiting for headers]&lt;/code&gt; for a longer period of time.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;You can test that everything is working by issuing the following command:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;You should get an output similar to this one:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;That is it. To make sure your container is always up to date, you need synchronize it every time you add a new packages. This can be achieved in multiple ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;adding a script which runs synchronize command after adding a package&lt;/li&gt;
+
+&lt;li&gt;adding a cron job which periodically runs the sync command&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>Libcloud Update (April 2012) - 0.8.0, 0.9.1, GSoC</title>
+        <link href="http://www.lakshmikannan.me/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html" />
+        <id>http://www.lakshmikannan.me/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html</id>
+		<updated>2012-04-28T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='libcloud_update_april_2012__080_091_gsoc'&gt;&lt;a href='/2012/04/28/libcloud-monthly-update-april-2012-0-8-0-0-9-1-gsoc.html'&gt;Libcloud Update (April 2012) - 0.8.0, 0.9.1, GSoC&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Welcome to Libcloud April 2012 update post. Sorry for skipping a couple of months, but I have been pretty busy again. In any case, here is a short but sweet April update.&lt;/p&gt;
+
+&lt;h3 id='what_has_been_accomplished_in_the_past_few_months'&gt;What has been accomplished in the past few months&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201202.mbox/%3CCAJMHEmJJcigBO%2BZoSyxFGvc5Z37t-t3KKHBHyyMi7L-J4-Y03A%40mail.gmail.com%3E'&gt;Libcloud 0.8.1&lt;/a&gt; with support for compressed responses (gzip, deflate) has been released.&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201204.mbox/%3CCAJMHEmJzeGL%2BU1PNeX0T-1dcxUC1um88jQTAmskZ-mXTQ3QLGw%40mail.gmail.com%3E'&gt;Libcloud 0.9.1&lt;/a&gt; with improvements in deploy functionality and OpenStack driver has been released.&lt;/li&gt;
+
+&lt;li&gt;I have attended &lt;a href='https://us.pycon.org/2012/'&gt;PyCon US 2012&lt;/a&gt; in Santa Clara in March. As always, it was a lot of fun talking with old and meeting new friends. This year we didn&amp;#8217;t hold a Libcloud development sprint, but I still managed to talk with some Libcloud users and prompted Libcloud at the AWS open space session.&lt;/li&gt;
+
+&lt;li&gt;Libcloud has applied to &lt;a href='http://www.google-melange.com/gsoc/homepage/google/gsoc2012'&gt;Google Summer of Code 2012&lt;/a&gt; under Apache organization. We have received 1 slot. Student Ilgiz Islamgulov will be working on the &lt;a href='https://issues.apache.org/jira/browse/LIBCLOUD-159'&gt;Libcloud REST interface&lt;/a&gt; this summer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class='imginline'&gt;&lt;img src='/images/dancing_robots.jpg' class='inline' /&gt;&lt;br /&gt;Dancing robots at PyCon&lt;br /&gt;&lt;/div&gt;
+&lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We are currently moving towards 1.0 release which means mostly polishing the code, fixing bugs and avoiding big and API breaking changes. A lot of code, especially compute API has already been battle tested, but there are still some parts which I want to see improved (deployment functionality for example) before releasing 1.0.&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>Libcloud Monthly Update (December 2011) - 0.6.1, 0.6.2, 0.7.1, Python 3</title>
+        <link href="http://www.lakshmikannan.me/2011/12/07/libcloud-montly-update-december-2011.html" />
+        <id>http://www.lakshmikannan.me/2011/12/07/libcloud-montly-update-december-2011.html</id>
+		<updated>2011-12-07T00:00:00-08:00</updated>
+		<content type="html">&lt;h2 id='libcloud_monthly_update_december_2011__061_062_071_python_3'&gt;&lt;a href='/2011/12/07/libcloud-montly-update-december-2011.html'&gt;Libcloud Monthly Update (December 2011) - 0.6.1, 0.6.2, 0.7.1, Python 3&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Past few months have been pretty busy here and you may have noticed that I didn&amp;#8217;t post a monthly update post in the last two months. This doesn&amp;#8217;t mean nothing has been going on though! In fact, quite the contrary. Last few months have been very busy and we have shipped two new releases and a voting thread for a new 0.7.1 release was just started a few days ago. More about that bellow.&lt;/p&gt;
+
+&lt;h3 id='what_has_been_accomplished_in_the_past_two_months'&gt;What has been accomplished in the past two months&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href='http://mail-archives.apache.org/mod_mbox/www-announce/201111.mbox/%3CCAJMHEm+8XX704mSY4qw4P0YSBjGK=0SWCKjzSHBe8sLD__2UnA@mail.gmail.com%3E'&gt;Libcloud 0.6.1&lt;/a&gt; with a brand new DNS API (among many other improvements and additions) has been released.&lt;/li&gt;
+
+&lt;li&gt;A few days after releasing 0.6.1 we have also released &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-users/201111.mbox/%3CCAJMHEmJTN407_JJRfnwDuJxNsWCupEGc0cXWxs=M-n8HoHoQKQ@mail.gmail.com%3E'&gt;0.6.2&lt;/a&gt; which was primary a bug-fix release, but it also includes some new features and improvements such as support for OpenStack Auth 2.0 API, support for new Amazon location (Oregon) and a CloudStack driver.&lt;/li&gt;
+
+&lt;li&gt;A few weeks ago a new committer, Hutson Betts (hbetts) has &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201111.mbox/%3CCAJMHEm+08-1MMCgHDZgULc+StDiwgR+_krVZvHOJF0odcU_OWg@mail.gmail.com%3E'&gt;joined our team&lt;/a&gt;. He has previously mostly contributed to the OpenNebula driver and we believe giving him commit access will allow him to contribute more directly and easily and is a good thing for the whole project.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A lot of things!&lt;/li&gt;
+
+&lt;li&gt;This weekend I have just finished adding support for Python 3 to Libcloud. Now we have a single code base which supports both, Python 2 and 3 and as far as I know we are the first Python cloud library which does that. I hope other projects will follow. If you are interested in more details you can read my post titled &lt;a href='/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html'&gt;Lessons learned while porting Libcloud to Python 3&lt;/a&gt; where I have described some of the issues which I have encountered while porting the library. Armin has recently also wrote a good blog post about Python 3 which you should read - &lt;a href='http://lucumr.pocoo.org/2011/12/7/thoughts-on-python3/'&gt;Thoughts on Python 3&lt;/a&gt;.&lt;/li&gt;
+
+&lt;li&gt;I am moving to San Francisco where I will work full time for Rackspace. I will try to organize a Bay Area Libcloud meet-up in the upcoming weeks (hey, free pizza and beer!). I will post more info on the website and mailing list when all the details are fleshed out.&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>Lessons learned while porting Libcloud to Python 3</title>
+        <link href="http://www.lakshmikannan.me/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html" />
+        <id>http://www.lakshmikannan.me/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html</id>
+		<updated>2011-12-03T00:00:00-08:00</updated>
+		<content type="html">&lt;h2 id='lessons_learned_while_porting_libcloud_to_python_3'&gt;&lt;a href='/2011/12/03/lessons-learned-while-porting-libcloud-to-python-3.html'&gt;Lessons learned while porting Libcloud to Python 3&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Yesterday after seeing and being inspired by the &lt;a href='http://news.ycombinator.com/item?id=3305021'&gt;Django Python 3 port&lt;/a&gt; news, I have decided it&amp;#8217;s finally time to port &lt;a href='http://libcloud.apache.org/'&gt;Libcloud&lt;/a&gt; to Python 3. There have already been some talks about doing that in the past, but nobody actually managed to make a lot of progress.&lt;/p&gt;
+
+&lt;p&gt;In general, our goal is pretty similar to the Django one - have a single code base which works with Python 2.5, 2.6, 2.7 / PyPy and Python 3.&lt;/p&gt;
+
+&lt;p&gt;Alternative approach to having a single code base is using a tool like &lt;a href='http://docs.python.org/library/2to3.html'&gt;2to3&lt;/a&gt; to automatically convert 2.x version to the 3.x one or having multiple code bases / branches - one for 2.x and one for 3.x.&lt;/p&gt;
+
+&lt;p&gt;Early on when we talked about porting to Python 3, we have decided that we will go with a &amp;#8220;single code base&amp;#8221; approach. This approach allows us to keep a fast development pace and it&amp;#8217;s also more friendlier for our users.&lt;/p&gt;
+
+&lt;p&gt;In this post I will describe some of the issues which I have encountered while porting the library and how I have solved them.&lt;/p&gt;
+
+&lt;h2 id='1_handling_renamed_libraries_and_moved_functionality'&gt;1. Handling renamed libraries and moved functionality&lt;/h2&gt;
+
+&lt;h3 id='httplib'&gt;httplib&lt;/h3&gt;
+
+&lt;p&gt;In Python 3 &lt;code&gt;httplib&lt;/code&gt; has been renamed to &lt;code&gt;http.client&lt;/code&gt;. To solve this problem, I have used an aliased import - &lt;code&gt;import http.client as httplib&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id='urllib__urllib2'&gt;urllib &amp;amp; urllib2&lt;/h3&gt;
+
+&lt;p&gt;All of the functionality from &lt;code&gt;urllib2&lt;/code&gt; has been merged to &lt;code&gt;urllib&lt;/code&gt;. This problem can also be easily solved using an aliased import - &lt;code&gt;import urllib as urllib2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id='urlparse'&gt;urlparse&lt;/h3&gt;
+
+&lt;p&gt;Functionality from &lt;code&gt;urlparse&lt;/code&gt; has been moved to &lt;code&gt;urllib.parse&lt;/code&gt;. We only use two functions from this module (quote and urlencode) so simple aliased import did the trick:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;h3 id='xmlrpclib'&gt;xmlrpclib&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;xmlrpclib&lt;/code&gt; has been moved to &lt;code&gt;xmlrpc.client&lt;/code&gt;. Simple aliased import also solved this problem - &lt;code&gt;import xmlrpc.client as xmlrpclib&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id='stringio'&gt;StringIO&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;StringIO&lt;/code&gt; has also been moved. &lt;code&gt;from io import StringIO&lt;/code&gt; did the trick.&lt;/p&gt;
+
+&lt;h2 id='2__type_and_filelike_objects'&gt;2. &lt;code&gt;file&lt;/code&gt; type and file-like objects&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;file&lt;/code&gt; type has been removed in Python 3. To resolve this problem, I have used code similar to the one bellow in the places where we use &lt;code&gt;file&lt;/code&gt; type.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;h2 id='3_generators_and__method'&gt;3. Generators and &lt;code&gt;.next()&lt;/code&gt; method.&lt;/h2&gt;
+
+&lt;p&gt;For consistency with other magic methods, &lt;code&gt;next&lt;/code&gt; method in Python 3 has been renamed to &lt;code&gt;__next__&lt;/code&gt;. To make it work with all the versions, I have used built-in &lt;code&gt;next&lt;/code&gt; function in Python &amp;gt;= 3 and object &lt;code&gt;.next()&lt;/code&gt; method in older versions.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;h2 id='4_exception_handling'&gt;4. Exception handling&lt;/h2&gt;
+
+&lt;p&gt;Sadly, there is no unified way to handle exceptions and extract the exception object in Python 2.5 and Python 3.x. This means I needed to use a hacky &lt;code&gt;sys.exc_info()[1]&lt;/code&gt; approach to extract the raised exception&lt;/p&gt;
+
+&lt;p&gt;Old code:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;New code:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;One of the PyPy developers has &lt;a href='http://www.reddit.com/r/Python/comments/mxufx/django_python_3_port_all_tests_now_pass_on_272/'&gt;posted on reddit&lt;/a&gt; that this approach is very slow in PyPy. Luckily, besides the tests, there aren&amp;#8217;t many places in our code where we need access to the exception object so this should be a good compromise for now.&lt;/p&gt;
+
+&lt;h2 id='5_filter_map_dictkeys'&gt;5. filter, map, dict.keys()&lt;/h2&gt;
+
+&lt;p&gt;In Python 2 those functions return a &lt;code&gt;list&lt;/code&gt;, but in Python 3 they return a special object. Compatibility can be preserved by casting a result from this function to a list - e.g. &lt;code&gt;list(filter(lamba x: x.name == &amp;#39;test&amp;#39;, nodes))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id='6_iteritems_xrange'&gt;6. iteritems, xrange&lt;/h2&gt;
+
+&lt;p&gt;In Python 3, &lt;code&gt;iteritems&lt;/code&gt; method has been removed and functionality from &lt;code&gt;xrange&lt;/code&gt; has been merged into &lt;code&gt;range&lt;/code&gt;. I have simplify replaced &lt;code&gt;iteritems&lt;/code&gt; with &lt;code&gt;items&lt;/code&gt; and &lt;code&gt;xrange&lt;/code&gt; with &lt;code&gt;range&lt;/code&gt;. We never used &lt;code&gt;xrange&lt;/code&gt; with a lot of values so storing a whole list in memory in Python 2.x shouldn&amp;#8217;t be a huge deal.&lt;/p&gt;
+
+&lt;h2 id='7__and_encoding'&gt;7. &lt;code&gt;xml.etree.ElementTree.tostring&lt;/code&gt; and encoding&lt;/h2&gt;
+
+&lt;p&gt;In Python 3 this method returns &lt;a href='http://hg.python.org/cpython/rev/57e631f088d7/'&gt;bytes by default&lt;/a&gt;. To preserve the old behavior and get a string back, I have used a code similar to one bellow:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;h2 id='8_encodehex'&gt;8. encode(&amp;#8216;hex&amp;#8217;)&lt;/h2&gt;
+
+&lt;p&gt;We had multiple places in the code where we did something like this:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;Hex encoding has been removed from Python 3. I have preserved backward compatibility by using &lt;code&gt;binascii&lt;/code&gt; module:&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;h2 id='9_octal_numbers'&gt;9. Octal numbers&lt;/h2&gt;
+
+&lt;p&gt;In Python 3 there is a special backward-incompatible (and strange) syntax for octal numbers - e.g. &lt;code&gt;0o755&lt;/code&gt;. We only use octal number in one place and this has been easily resolved by using &lt;code&gt;int&lt;/code&gt; to convert a string to a number with base 8 - &lt;code&gt;int(&amp;#39;755&amp;#39;, 8)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Those are just some of the issues I have encountered during porting. If you want to view all of the issues and how I have resolved them, you can see a full diff &lt;a href='https://github.com/apache/libcloud/compare/c995ea6b8b37d4bbec741a7d2d70b08da1c62f55...py3k'&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Overall, I&amp;#8217;m pretty satisfied with the outcome. I have managed to keep most of the Python 2 and Python 3 compatibility code in a single module (&lt;code&gt;libcloud.py3&lt;/code&gt;) and it probably took me less then 5 hours to do the whole port including the research.&lt;/p&gt;
+
+&lt;p&gt;Bellow you can also find some links which I have found helpful while porting the code:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href='http://docs.python.org/library/2to3.html'&gt;http://docs.python.org/library/2to3.html&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://docs.python.org/release/3.0.1/whatsnew/3.0.html'&gt;http://docs.python.org/release/3.0.1/whatsnew/3.0.html&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://python3porting.com/differences.html'&gt;http://python3porting.com/differences.html&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://www.voidspace.org.uk/python/articles/porting-mock-to-python-3.shtml'&gt;http://www.voidspace.org.uk/python/articles/porting-mock-to-python-3.shtml&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>Whiskey Node.js test runner now with more goodness - introducing process runner</title>
+        <link href="http://www.lakshmikannan.me/2011/11/27/whiskey-now-with-more-goodness-introducing-process-runner.html" />
+        <id>http://www.lakshmikannan.me/2011/11/27/whiskey-now-with-more-goodness-introducing-process-runner.html</id>
+		<updated>2011-11-27T00:00:00-08:00</updated>
+		<content type="html">&lt;p&gt;First a short-introduction for people who aren&amp;#8217;t familiar with Whiskey.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href='https://github.com/cloudkick/whiskey'&gt;Whiskey&lt;/a&gt; is a powerful test runner for Node.js applications. It supports async testing, code coverage, scope leaks reporting, Makefile generation, test timing and lot more. Be sure to check out the &lt;a href='https://github.com/cloudkick/whiskey'&gt;github page&lt;/a&gt; which lists all the features.&lt;/p&gt;
+
+&lt;p&gt;New version (0.6.0) which has been released today includes a process runner and a support for managing external test dependencies. Test dependency is any kind of process on which the (integration) tests depend on.&lt;/p&gt;
+
+&lt;p&gt;Examples include, but are not limited to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;database,&lt;/li&gt;
+
+&lt;li&gt;some kind of api server,&lt;/li&gt;
+
+&lt;li&gt;web server,&lt;/li&gt;
+
+&lt;li&gt;other external services&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Process runner is configured using a simple JSON configuration file. Most of the options have sane default values, which means if you don&amp;#8217;t have any special requirements you can configure it very quickly.&lt;/p&gt;
+
+&lt;p&gt;Example configuration file which we use for our monitoring system integration test suite at Rackspace can be found &lt;a href='https://gist.github.com/5953e55ced30ef8a9581'&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Each process can also specify its dependencies in the &lt;code&gt;depends&lt;/code&gt; option which allows Whiskey to start unrelated processes concurrently.&lt;/p&gt;
+
+&lt;p&gt;Before Whiskey process runner was available we have been using &lt;a href='http://www.scons.org/'&gt;scons&lt;/a&gt; for managing and running all the test dependencies. Test dependencies related section in our &lt;code&gt;SConstruct&lt;/code&gt; file was long and hard to maintain which means switching to Whiskey process runner was a nice improvement.&lt;/p&gt;
+
+&lt;p&gt;Process runner can be used by passing &lt;code&gt;--dependencies &amp;lt;configuration_file_path.json&amp;gt;&lt;/code&gt; option to &lt;code&gt;whiskey&lt;/code&gt; binary. By default all the dependencies specified in the configuration file are started, but there is also &lt;code&gt;--only-esential-dependencies&lt;/code&gt; option available which will make Whiskey first inspect the test files and only start the processes which are required by the tests which will be ran.&lt;/p&gt;
+
+&lt;p&gt;Each test file can specify on which processes it depends by exporting &lt;code&gt;dependencies&lt;/code&gt; attribute. This attribute must be an array and contain the names of the processes as defined in the configuration file.&lt;/p&gt;
+
+&lt;p&gt;If you have any questions or suggestions you can find me on #Node.js IRC channel on freenode (nick &lt;code&gt;Kami_&lt;/code&gt;). If you find a bug or a problem you can also open an ticket on the project &lt;a href='https://github.com/cloudkick/whiskey/issues'&gt;issue tracker&lt;/a&gt;.&lt;/p&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>libcloud Monthly Update (September 2011) - FLOSS weekly, OpenStack driver improvements, DNS API</title>
+        <link href="http://www.lakshmikannan.me/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html" />
+        <id>http://www.lakshmikannan.me/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html</id>
+		<updated>2011-09-24T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='libcloud_monthly_update_september_2011__floss_weekly_openstack_driver_improvements_dns_api'&gt;&lt;a href='/2011/09/24/libcloud-monthly-update-september-floss-weekly-openstack-improvements-dns-api.html'&gt;libcloud Monthly Update (September 2011) - FLOSS weekly, OpenStack driver improvements, DNS API&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Without further ado here is a Libcloud monthly update for September 2011.&lt;/p&gt;
+
+&lt;h3 id='what_has_been_accomplished_in_the_past_month'&gt;What has been accomplished in the past month&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;I was a guest on FLOSS weekly (podcast about FOSS software) where I talked about Libcloud. You can find video and audio recording of the show on &lt;a href='http://twit.tv/show/floss-weekly/181'&gt;twit.tv&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;OpenStack and Rackspace drivers have received a lot of needed attention and refactoring. Rackspace driver now properly inherits from the OpenStack one instead of vice versa (thanks &lt;a href='https://issues.apache.org/jira/secure/ViewProfile.jspa?name=manganeez'&gt;Mike&lt;/a&gt;). This will make extending the Rackspace driver and developing other provider drivers which are based on OpenStack a lot easier. Rackspace drivers now also support authentication with Rackspace Auth 1.1.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;Linode compute driver now supports new location in Japan.&lt;/p&gt;
+
+&lt;p&gt;Linode has recently &lt;a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'&gt;added a new location (Tokyo, Japan)&lt;/a&gt; and this location is now also &lt;a href='http://blog.linode.com/2011/09/19/linode-cloud-asia-pacific/'&gt;supported in Libcloud&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;DNS API development has finally started.&lt;/p&gt;
+
+&lt;p&gt;Base API proposal can be found &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmLfWki5awUqZL9ZNsrpJFkHNHAe00Vs5SeaJXkmWSxJ7g@mail.gmail.com%3E'&gt;here&lt;/a&gt;. I have also just finished a reference implementation and a first driver for the Linode DNS as a service. The driver can be found in &lt;a href='https://svn.apache.org/viewvc/libcloud/trunk/libcloud/dns/drivers/linode.py?view=markup'&gt;trunk&lt;/a&gt;. Feedback is &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201109.mbox/%3CCAJMHEmL7M12TG5eFz0HQ-kCuA3=ZnNkTt8_veoOFNfueaG9q2w@mail.gmail.com%3E'&gt;welcome (and encouraged)&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hacking on the DNS API continues. DNS API with at least two drivers is planned to be included in the next release (0.6.0) which should be out around November.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;See you next month!&lt;/p&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>libcloud Monthly Update (August 2011) - 0.5.2 release, EuroPython 2011 recap, FLOSS weekly</title>
+        <link href="http://www.lakshmikannan.me/2011/08/24/libcloud-monthly-update-august.html" />
+        <id>http://www.lakshmikannan.me/2011/08/24/libcloud-monthly-update-august.html</id>
+		<updated>2011-08-24T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='libcloud_monthly_update_august_2011__052_release_europython_2011_recap_floss_weekly'&gt;&lt;a href='/2011/08/24/libcloud-monthly-update-august.html'&gt;libcloud Monthly Update (August 2011) - 0.5.2 release, EuroPython 2011 recap, FLOSS weekly&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;As you might have noticed, I didn&amp;#8217;t write a monthly update post in the last two months. The reason for that is that I have been busy with work and finishing my thesis for a bachelor degree.&lt;/p&gt;
+
+&lt;p&gt;In this post I will try to sum up what has happened during this time and what is currently going on.&lt;/p&gt;
+
+&lt;h3 id='what_has_happened_in_the_past_two_months'&gt;What has happened in the past two months&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Libcloud 0.5.2 has been released.&lt;/p&gt;
+
+&lt;p&gt;This is a primary a bug-fix release, but it also includes two new compute drivers for &lt;em&gt;serverlove.com&lt;/em&gt; and &lt;em&gt;skalicloud.com&lt;/em&gt;. Full changelog and release announcement can be found &lt;a href='http://mail-archives.apache.org/mod_mbox/www-announce/201107.mbox/%3CCAJMHEmK_y8kkyBLJojfuCvx1CPxrTcy95xA3Wp-vZ4U9BhTXDw@mail.gmail.com%3E'&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;EuroPython 2011 sprint was a success.&lt;/p&gt;
+
+&lt;p&gt;At a peek time we had a total of 6 sprinters :) A lot of stuff which has been accomplished at the sprint has been integrated into 0.5.2 release. You can also find slides and recording of my Libcloud talk on &lt;a href='http://ep2011.europython.eu/conference/talks/managing-the-cloud-with-libcloud'&gt;EuroPython 2011 website&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;I have finally met another Libcloud developer in real-life.&lt;/p&gt;
+
+&lt;p&gt;This time I have met &lt;a href='http://empt1e.blogspot.com/'&gt;Roman a.k.a. mirrorbox&lt;/a&gt; in San Francisco. Most of our conversation was not Libcloud related, but we managed to talk a bit about the Libcloud future and topics such as DNS support, problems with our current blocking-model and asynchronous API&amp;#8217;s and possible support for event-based libraries such as Twisted and gevent.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Me and &lt;strike&gt;Paul Querna&lt;/strike&gt; (Paul Querna can&amp;#8217;t make it since he is away on 7th) will be guests on the &lt;a href='http://twit.tv/FLOSS'&gt;FLOSS weekly&lt;/a&gt; podcast so don&amp;#8217;t forget to tune-in on &lt;strong&gt;September 7, 2011 at 09:30 AM US Pacific Time&lt;/strong&gt;. Show is streamed live, but as always recording will also be available a day or two later.&lt;/li&gt;
+&lt;/ul&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>libcloud Monthly Update (May 2011) - 0.5.0 Release, Graduation, EuroPython</title>
+        <link href="http://www.lakshmikannan.me/2011/05/26/libcloud-monthly-update-may.html" />
+        <id>http://www.lakshmikannan.me/2011/05/26/libcloud-monthly-update-may.html</id>
+		<updated>2011-05-26T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='libcloud_monthly_update_may_2011__050_release_graduation_europython'&gt;&lt;a href='/2011/05/26/libcloud-monthly-update-may.html'&gt;libcloud Monthly Update (May 2011) - 0.5.0 Release, Graduation, EuroPython&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;May has been a very busy and important month for us. We have finally manged to finalize and release a long awaited version 0.5.0.&lt;/p&gt;
+
+&lt;p&gt;Part of the reason that we have finally managed to release 0.5.0 this month was that me and &lt;a href='http://paul.querna.org/'&gt;Paul Querna&lt;/a&gt; were present at the Apache Retreat in Ireland where we have spent some time hacking on Libcloud and polishing the last few features which were missing for the release.&lt;/p&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://libcloud.apache.org'&gt;&lt;img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;p&gt;Overall, Libcloud 0.5.0 is a big step forward and represents a big milestone for the project. It includes many new features, improvements and new compute drivers.&lt;/p&gt;
+
+&lt;h3 id='major_changes_in_libcloud_050'&gt;Major changes in Libcloud 0.5.0&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;New cloud Storage API&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Version 0.5.0 includes a new storage API which allows you to manage services such as Amazon S3 and Rackspace CloudFiles. Our main priority for this release was defining a good base API and this is also the reason why this release only includes two provider drivers.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;New Load-balancer API&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Beside cloud storage we have also added a new API for managing load-balancers (LbaaS). Similar to the storage we were also focusing on defining a good base API so this release only includes Rackspace and GoGrid driver.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Changes in the existing API&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;To support the new APIs and services we had to refactor the existing API which means that all of the &amp;#8220;compute&amp;#8221; functionality has been moved to &lt;em&gt;libcloud.compute&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Old module locations (libcloud.deployment, libcloud.providers, libcloud.types, etc.) have been deprecated and will be fully removed in version 0.6.0. At the moment you can still use them, but importing something from the old location will emit a deprecation warning so we encourage our users to update their code to use the new module locations.&lt;/p&gt;
+
+&lt;h4 id='new_compute_drivers'&gt;New compute drivers&lt;/h4&gt;
+
+&lt;p&gt;Among other changes and improvements, this release also includes 5 new compute drivers:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href='http://www.bluebox.net/'&gt;Bluebox&lt;/a&gt; (contributed by Christian Paredes)&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://www.gandi.net'&gt;Gandi.net&lt;/a&gt; (contributed by Aymeric Barantal)&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://www.nimbusproject.org/'&gt;Nimbus&lt;/a&gt; (contributed by David LaBissoniere)&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://www.openstack.org'&gt;OpenStack&lt;/a&gt; (contributed by Roman Bogorodskiy)&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://www.opsource.net/Services/Cloud-Hosting'&gt;Opsource.net&lt;/a&gt; cloud (contributed by Joe Miller)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Full release announcement can be found on the &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201105.mbox/%3CBANLkTi=LqBidHLHUwAJSAWSzd-qSpad+dA@mail.gmail.com%3E'&gt;mailing list&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id='graduation_to_a_top_level_project'&gt;Graduation to a Top Level Project&lt;/h3&gt;
+
+&lt;p&gt;Second very important milestone for us this month was graduating from the Apache Incubator to a Top Level Project. This puts us on par with other Apache projects such as Apache Cassandra and Apache Subversion.&lt;/p&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://apache.org/'&gt;&lt;img src='/images/apache_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;p&gt;Graduation signifies that both the Apache Libcloud product and community have been well-governed under the Foundation&amp;#8217;s meritocratic, consensus-driven process and principles.&lt;/p&gt;
+
+&lt;p&gt;Graduating to a Top Level Project means that now we have a &lt;a href='http://www.apache.org/dev/pmc.html'&gt;Project Management Committee&lt;/a&gt; (PMC) which will overlook our operations and make sure everything is running smoothly.&lt;/p&gt;
+
+&lt;p&gt;To graduate we also had to select a &lt;a href='http://www.apache.org/foundation/how-it-works.html#pmc-chair'&gt;project chair&lt;/a&gt;. Other members have proposed me for this role and I have accepted it. My primary role as a project chair will be to communicate with the board (quarterly status reports, etc.) and making sure there aren&amp;#8217;t any conflicts and the project is running smoothly.&lt;/p&gt;
+
+&lt;p&gt;As part of graduation we also had to move our website and SVN repositories. You can find all the new address in &lt;a href='http://mail-archives.apache.org/mod_mbox/libcloud-dev/201105.mbox/%3CBANLkTinTq7RrKpe8SMmSeKKW8yQpu-77Ew@mail.gmail.com%3E'&gt;this thread on the mailing list&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Official graduation announcement / press release can be found on the Apache blog - &lt;a href='https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces12'&gt;The Apache Software Foundation Announces Apache Libcloud as a Top-Level Project&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id='libcloud_at_europython_2011_in_florence_italy'&gt;Libcloud at EuroPython 2011 in Florence, Italy&lt;/h3&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://ep2011.europython.eu/'&gt;&lt;img src='/images/europython_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;p&gt;I will be at EuroPython in Italy next month where I will give an &lt;a href='http://ep2011.europython.eu/conference/talks/managing-the-cloud-with-libcloud'&gt;introductory talk about Libcloud&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Beside giving a talk we will also host a development sprint there. This is a great opportunity for anyone who wants to contribute to the project or learn something new to join us. I will post more details about the sprint in the upcoming weeks on the &lt;a href='http://libcloud.apache.org/devinfo.html'&gt;libcloud mailing list&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;So that is it for May. See you next month when I will hopefully be able to report about multiple new storage and compute drivers and other improvements.&lt;/p&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>libcloud Monthly Update (April 2011) - Storage API, load-balancer API, new drivers</title>
+        <link href="http://www.lakshmikannan.me/2011/04/26/libcloud-monthly-update-april-2011-storage-api-load-balancer-api-new-drivers.html" />
+        <id>http://www.lakshmikannan.me/2011/04/26/libcloud-monthly-update-april-2011-storage-api-load-balancer-api-new-drivers.html</id>
+		<updated>2011-04-26T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='libcloud_monthly_update_april_2011__storage_api_loadbalancer_api_new_drivers'&gt;&lt;a href='/2011/04/26/libcloud-monthly-update-april-2011-storage-api-load-balancer-api-new-drivers.html'&gt;libcloud Monthly Update (April 2011) - Storage API, load-balancer API, new drivers&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Another month is around and it is time for another libcloud monthly update post. I did not write one previous month, because I have written &amp;#8221;&lt;a href='/2011/03/18/pycon-us-2011-recap.html'&gt;PyCon US 2011 Recap&lt;/a&gt;&amp;#8221; post which also includes information about libcloud development which has happened during PyCon and in March.&lt;/p&gt;
+&lt;div style='text-align: center;'&gt;&lt;a target='_blank' href='http://incubator.apache.org/libcloud/'&gt;&lt;img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /&gt;&lt;/a&gt;&lt;/div&gt;&lt;br /&gt;
+&lt;h3 id='what_has_been_accomplished_in_april_2011'&gt;What has been accomplished in April 2011&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;libcloud website has been ported to the Apache CMS. Now adding new and editing existing content should be a lot easier.&lt;/li&gt;
+
+&lt;li&gt;Extension method for modifying the instance attributes and changing the instance size has been added to the Amazon compute driver - &lt;a href='https://github.com/apache/libcloud/commit/dc9ccd87a44399ec9fa4c1982c0fc91859a305f1'&gt;r1084180&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;Gandi.net compute driver has been contributed by Aymeric Barantal - &lt;a href='https://issues.apache.org/jira/browse/LIBCLOUD-76'&gt;LIBCLOUD-76&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;CloudFiles storage driver and the base storage class have undergone a lot of improvements&lt;/li&gt;
+
+&lt;li&gt;CloudFiles storage driver &lt;a href='http://ci.apache.org/projects/libcloud/coverage/libcloud_storage_drivers_cloudfiles.html'&gt;code coverage&lt;/a&gt; has been increased for ~20% (from ~70% to ~89)&lt;/li&gt;
+
+&lt;li&gt;A new Amazon S3 storage driver has been committed intro trunk - &lt;a href='https://github.com/apache/libcloud/blob/trunk/libcloud/storage/drivers/s3.py'&gt;s3.py&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;OpSource compute driver has been contributed by Joe Miller - &lt;a href='https://issues.apache.org/jira/browse/LIBCLOUD-77'&gt;LIBCLOUD-77&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;Work has started on the load-balancer API and a reference drivers for GoGrid and Rackspace have already been committed into trunk. &lt;a href='https://github.com/apache/libcloud/commit/cf8b90c3a9eb0cc5659ce71b40883e6e67581aad'&gt;r1095180&lt;/a&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;a href='http://incubator.apache.org/libcloud/community-resources.html'&gt;Community resources&lt;/a&gt; section has been added to the website. This section contains links to different articles, tutorials and presentations produced by the libcloud developers and users.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id='what_is_currently_going_on'&gt;What is currently going on&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Jeremy Whitlock is working on the &lt;a href='http://libvirt.org/'&gt;libvirt&lt;/a&gt; driver. If you have any feedback or suggestions for this driver, please share it with others on the &lt;a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201104.mbox/%3CFA4867B9-0BFF-4F7C-84D9-CF342632446A@gmail.com%3E'&gt;mailing list&lt;/a&gt;.&lt;/li&gt;
+
+&lt;li&gt;Work continues on the storage and the load-balancer API. Only some minor changes are still needed for the storage API to be considered stable enough so libcloud 0.5.0 can be released.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id='misc'&gt;Misc&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Roman (the main author of the libcloud load-balancer API) has written a blog post which describes some differences and caveats which you can encounter while working with the Rackspace and GoGrid load-balancer API so be sure to check it out - &lt;a href='http://empt1e.blogspot.com/2011/04/comparison-of-gogrid-and-rackspace-load.html'&gt;Overview of GoGrid and Rackspace Load Balancing Services&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As you can see, April was pretty busy and a lot of new stuff has been committed into trunk.&lt;/p&gt;
+
+&lt;p&gt;Storage API will hopefully be finished soon and one of the highlights of the next month update post will be a long-awaited libcloud 0.5.0 release :)&lt;/p&gt;</content>
+	</entry>
+    
+	<entry>
+		<title>Making Django and Twisted tests faster</title>
+        <link href="http://www.lakshmikannan.me/2011/04/03/making-django-and-twisted-tests-faster.html" />
+        <id>http://www.lakshmikannan.me/2011/04/03/making-django-and-twisted-tests-faster.html</id>
+		<updated>2011-04-03T00:00:00-07:00</updated>
+		<content type="html">&lt;h2 id='making_django_and_twisted_tests_faster'&gt;&lt;a href='/2011/04/03/making-django-and-twisted-tests-faster.html'&gt;Making Django and Twisted tests faster&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;As we all know writing tests is not particularly fun and having a test suite which takes a long time to complete makes everything even less enjoyable.&lt;/p&gt;
+
+&lt;p&gt;Currently at Cloudkick our test suite is not particularly large or slow, but I still wanted the tests to finish faster (when dealing with tests, every minute counts).&lt;/p&gt;
+
+&lt;p&gt;We have two types of tests - Django and Twisted tests.&lt;/p&gt;
+
+&lt;p&gt;One obvious approach to speed the tests up is to run them in parallel.&lt;/p&gt;
+
+&lt;p&gt;A similar solution which runs the tests in parallel already exists - &lt;a href='http://somethingaboutorange.com/mrl/projects/nose/0.11.1/plugins/multiprocess.html'&gt;multiprocessing plugin&lt;/a&gt; for the &lt;a href='http://somethingaboutorange.com/mrl/projects/nose/1.0.0/'&gt;nose test runner&lt;/a&gt;. The main problem with this plugin is, that it is pretty useless where a lot of tests depend on each other. Even when I have defined all the dependencies properly, the tests were still around 60% slower.&lt;/p&gt;
+
+&lt;p&gt;In the end, I have decided to write a custom Django and Twisted test runner which runs the tests in parallel.&lt;/p&gt;
+
+&lt;p&gt;Keep in mind that even before writing a custom test runner we have used a &amp;#8220;trick&amp;#8221; which makes the tests run faster - MySQL data directory on our continuous integration server is stored on a ram disk.&lt;/p&gt;
+
+&lt;p&gt;Basically our new Django test runner works like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create a pool of worker processes&lt;/li&gt;
+
+&lt;li&gt;Partition the tests so we can run each application tests in a separate worker process&lt;/li&gt;
+
+&lt;li&gt;Put pending tests in the &lt;code&gt;pending_tests&lt;/code&gt; queue&lt;/li&gt;
+
+&lt;li&gt;Each worker waits for new a new item to appear in this queue and when available, runs the tests&lt;/li&gt;
+
+&lt;li&gt;When a worker has finished running the tests, results are formatted, pickled and put in a separate &lt;code&gt;tests_results&lt;/code&gt; queue&lt;/li&gt;
+
+&lt;li&gt;Main process periodically checks for new items in the &lt;code&gt;tests_results&lt;/code&gt; queue and prints the results when they are available&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The approach sounds pretty simple, but there are some caveats:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;because multiple processes run in parallel this means that the test output will get interleaved. The solution is to buffer each worker output and finally print it out in the main process after the worker has finished running the tests. The problem with this approach is that the output is not real-time, but it should work fine for most of the cases. If we really wanted a real-time output, I could have used a lock, but this would just add additional complexity and slow things down.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;partitioning the tests - Currently our partitioning / grouping approach is really simple, but it works well. Django tests are grouped by application and the Twisted tests are grouped by the test module. Before trying this really simple partitioning / grouping scheme I have experimented with more complicated approaches, but it turned out that in our case, simple approach is better.&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;p&gt;creating a separate database for each worker. Most of our Django tests manipulate the state in the database so a reasonable solution is to create a separate database for each worker. To make this work I had to override the &lt;code&gt;setup_databases()&lt;/code&gt; function defined in the Django test runner class.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Because this function has changed in Django 1.3 I also had to create two separate versions - one for Django 1.2 and one for Django 1.3.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;I have also used a very similar approach for the Twisted parallel test runner.&lt;/p&gt;
+
+&lt;p&gt;As a first thing, I have created a special base class which works similar as the Django &lt;code&gt;TestCase&lt;/code&gt; class - it disables database transactions in &lt;code&gt;setUp()&lt;/code&gt; and does a database roll-back in the &lt;code&gt;tearDown()&lt;/code&gt; method (database rollback is a lot faster than re-creating all the tables).&lt;/p&gt;
+
+&lt;p&gt;For the Twisted runner to buffer the test output, I had to modify the trial &lt;code&gt;_makeRunner&lt;/code&gt; function and pass it in a custom stream object.&lt;/p&gt;
+
+&lt;p&gt;Liquid error: No such file or directory - posix_spawnp&lt;/p&gt;
+
+&lt;p&gt;To make each worker use a separate database I also had to manually manipulate the connection &lt;code&gt;settings_dict&lt;/code&gt; dictionary and adjust the value for the &lt;code&gt;TEST_NAME&lt;/code&gt; item (I prepend worker index to each test database name).&lt;/p&gt;
+
+&lt;p&gt;There are still a lot of possible improvements left and some of them are already on my road-map.&lt;/p&gt;
+
+&lt;p&gt;Currently our number of tests and applications is not that high so it does not add much overhead to spawn a separate worker process for each application. Later on when our application number grows, it might make sense to use a smarter grouping method.&lt;/p&gt;
+
+&lt;p&gt;Because not all of the Django tests require access to the database, one obvious improvement would also be to spawn a separate worker process for those tests.&lt;/p&gt;
+
+&lt;p&gt;As I mentioned previously, our MySQL data directory is located on a ram disk so creating a database does not take that long, but every change which makes tests faster and is not too complex is worth considering.&lt;/p&gt;
+
+&lt;p&gt;In the end this modifications did take some time, but it was well wort it - both Django and Twisted tests now finish around &lt;strong&gt;50%&lt;/strong&gt; - &lt;strong&gt;60%&lt;/strong&gt; faster.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update: Multiple people have asked me about the full runner source code so I have put it in Github - &lt;a href='https://github.com/Kami/parallel-django-and-twisted-test-runner'&gt;https://github.com/Kami/parallel-django-and-twisted-test-runner&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;</content>
+	</entry>
+    
 </feed>

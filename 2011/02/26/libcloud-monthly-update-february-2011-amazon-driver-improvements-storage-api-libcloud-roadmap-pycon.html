@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/syntax.css" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/tipsy.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+        <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="lakshmikannan.me feed" />
+        <meta name="google-site-verification" content="ynmOt0WzX8sVTNjmph4-tcmcUq8GzD3ao2AqpUJVlcY" />
+        <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1107810-12");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+
+
+        <title>lakshmikannan.me - libcloud Monthly Update (February 2011) - Amazon driver improvements, Storage API, libcloud roadmap, PyCon</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+        <script type='text/javascript'>
+          $(window).load(function()
+          {
+            $('img[alt]').tipsy({title: 'alt' });
+            $('a[title]').tipsy({title: 'title', gravity: 's'});
+          });
+        </script>
+    </head>
+    <body>
+        <a href="http://github.com/Kami"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" /></a>
+        <div id="links" class="menu">
+            <ul class="nobullet">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/archive.html">Archive</a></li>
+                <li><a href="/atom.xml">Feed</a></li>
+                <li><a href="/about.html">About</a></li>
+
+                <li><br /></li>
+                <li class="title">Find me on</li>
+                <li><a href="https://plus.google.com/109309112648698037559/about">Google plus</a></li>
+                <li><a href="http://twitter.com/lnkmails">Twitter</a></li>
+                <li><a href="http://github.com/lakshmi-kannan">Github</a></li>
+                <li><a href="http://www.linkedin.com/in/kannanln">LinkedIn</a></li>
+
+            </ul>
+        </div>
+        <div id="wrapper">
+            <div id="header">
+                <div class="logo"></div>
+                <h1><a href="/index.html">The good, the bad and the ugly.</a></h1>
+            </div>
+            <div id="content">
+                <div class="postdateheading"> Feb 26, 2011 </div>
+<div class="postcontent">
+    <h2 id='libcloud_monthly_update_february_2011__amazon_driver_improvements_storage_api_libcloud_roadmap_pycon'><a href='/2011/02/26/libcloud-monthly-update-february-2011-amazon-driver-improvements-storage-api-libcloud-roadmap-pycon.html'>libcloud Monthly Update (February 2011) - Amazon driver improvements, Storage API, libcloud roadmap, PyCon</a></h2>
+
+<p>February is coming to an end and here is another libcloud monthly update post.</p>
+
+<p>This month has been pretty busy for me and the storage API hasn&#8217;t progressed as much as I hoped, but nevertheless here is a short description of what has been going on in the past month.</p>
+<div style='text-align: center;'><a target='_blank' href='http://incubator.apache.org/libcloud/'><img src='/images/libcloud_logo.png' style='border: none !important;' align='middle' /></a></div><br />
+<h3 id='what_has_been_accomplished_in_february_2011'>What has been accomplished in February 2011</h3>
+
+<ul>
+<li>Amazon EC2 nodes now correctly store IP address in the Node object public_ip and private_ip attribute (previously DNS names were stored) - <a href='https://github.com/apache/libcloud/commit/9fb15e10c3d8c1141f531bb24dffed8ad5ba0ad0'>r1071367</a></li>
+
+<li>Support for listing node tags (<em>ex_describe_tags()</em>) has been added to the Amazon EC2 driver - <a href='https://github.com/apache/libcloud/commit/a72dc0744b4df5824ef893e5be1f2b6e45c4a00c'>r1067376</a></li>
+
+<li>Support for Elastic IP addresses has been added to the Amazon EC2 driver - <a href='https://github.com/apache/libcloud/commit/20f655f458903ed36a2497b658519bef20ca20d2'>1071455</a></li>
+
+<li>Support for adding and deleting node tags has been contributed by Brandon Rhodes and added to the Amazon EC2 driver - <a href='https://github.com/apache/libcloud/commit/25f795d78922f45bdea9e5379cc0b6a35fcb0488'>r1072101</a></li>
+
+<li>Method for listing node IP addresses (<em>ex_list_ips()</em>) has been added to the GoGrid driver - <a href='https://github.com/apache/libcloud/commit/104b6a41aa12b65822095d01a4195041b9e0ddfd'>r1067448</a></li>
+
+<li>Support for rebuilding a node (<em>ex_rebuild()</em>) and retrieving node details (<em>ex_get_node_details()</em>) has been contributed by Andrew Klochkov and added to the Rackspace driver - <a href='https://github.com/apache/libcloud/commit/99a6e8b89b605525da4cd1096e0e53d4fdb4d544'>r1067451</a></li>
+</ul>
+
+<p>As you can see a lot of the changes are provider specific. Base libcloud API is very clear and simple to use, but a lot of users also need provider specific functionality which is in libcloud&#8217;s case exposed through the extension methods (methods prefixed with <em>ex_)</em>.</p>
+
+<h3 id='what_is_currently_going_on'>What is currently going on</h3>
+
+<ul>
+<li>Storage API is <a href='https://github.com/kami/libcloud/tree/storage_api'>under development</a> and the first alpha release of libcloud with storage support is planned to be released before PyCon (March 11th). If you check out the github repository, you can see that the <a href='https://github.com/Kami/libcloud/blob/storage_api/libcloud/storage/base.py'>base API</a> and the <a href='https://github.com/Kami/libcloud/blob/storage_api/libcloud/storage/drivers/cloudfiles.py'>reference driver for CloudFiles</a> have already been implemented. Keep in mind that this is a development version and it is quite possible that the API will still slightly change before the final release.</li>
+
+<li>debate about libcloud road-map and plans for the future on the <a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201102.mbox/browser'>mailing list</a></li>
+</ul>
+<br />
+<h3 id='libcloud_at_pycon_2011_march_11__march_17'>Libcloud at PyCon 2011 (March 11 - March 17)</h3>
+<div style='text-align: center;'><a target='_blank' href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201102.mbox/%3CAANLkTimwn5Dm372VYZ4YVcgKQqbVVwxyo8=DMFtHoTwg@mail.gmail.com%3E'><img src='http://us.pycon.org/2011/site_media/static/img/badges/pycon-badge-200x60.png' style='border: none !important;' align='middle' /></a></div><br />
+<p>Libcloud will be present at this year&#8217;s <a href='http://us.pycon.org/2011/sprints/projects/'>PyCon sprints</a>. This is a great opportunity for you to join us, have fun, contribute and learn something new.</p>
+
+<p>Topics range from beginner to intermediate level so they are appropriate for just about anyone:</p>
+
+<ul>
+<li>Finishing off the Storage support</li>
+
+<li>Refactoring existing modules</li>
+
+<li>Porting it to Python 3K</li>
+
+<li>Documentation enhancements</li>
+
+<li>Improving the website (Currently, it&#8217;s just a bunch of static HTML files which means it&#8217;s hard to maintain it. We should port it to some kind of Python/Django based CMS).</li>
+
+<li>Setting up a new build system which hits and tests the actual provider APIs</li>
+</ul>
+
+<p>Don&#8217;t forget to post on <a href='http://mail-archives.apache.org/mod_mbox/incubator-libcloud/201102.mbox/%3CAANLkTimwn5Dm372VYZ4YVcgKQqbVVwxyo8=DMFtHoTwg@mail.gmail.com%3E'>our mailing list</a> if you plan to join us.</p>
+
+<p>Hope to see you at PyCon in Atlanta and bye until the next month!</p>
+</div>
+<div class="postfooter">
+    <div class="posttags">Tags: <a href="/tags/libcloud.html">libcloud</a>, <a href="/tags/open%20source.html">open source</a>, <a href="/tags/programming.html">programming</a></div>
+</div>
+
+            </div>
+        </div>
+        <div id="footer">Powered by <a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>, design forked from <a href="http://github.com/mrtazz/blog" target="_blank">Daniel Schauenberg</a></div>
+    </body>
+</html>
