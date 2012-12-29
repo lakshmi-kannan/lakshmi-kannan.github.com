@@ -1,7 +1,6 @@
 #!/bin/bash
 
 git pull origin master
-cd _source
 jekyll --no-server
 cd ..
 rsync -vur --delete _source/_site/* .
