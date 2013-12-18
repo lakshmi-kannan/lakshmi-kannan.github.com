@@ -38,7 +38,7 @@ p { margin-top:.6em; margin-bottom:.6em }
     position: absolute;
     left: 1040px;
     top: 180px;
-    width: 130px;
+    width: 140px;
 }
 
 #header a {
@@ -62,6 +62,10 @@ img
   border: 1px solid black;
 }
 
+img.no-border
+{
+  border: none;
+}
 ul#factslist
 {
     margin-left: 20px;
@@ -163,4 +167,9 @@ div.imginline {
 img.inline {
   border: none !important;
   margin-bottom: 8px;
+}
+
+.image-caption {
+  display: block;
+  margin-top: 10px;
 }
