@@ -40,11 +40,14 @@
 					<h1>Blueflood</h1>
 					<h3>Multi-tenanted time series datastore</h3>
 					<h4><a href="http://blueflood.io">http://blueflood.io</a></h4>
+                    <h4><a href="https://intelligence.rackspace.com">https://intelligence.rackspace.com</a></h4>
+
 					<br>
 					<br>
 					<p>
-						<small><a href="http://lakshmikannan.me">Lakshmi Kannan</a><br>
-						<a href="https://github.com/lakshmi-kannan">https://github.com/lakshmi-kannan</a>
+						<small>
+                        <a href="http://lakshmikannan.me">Lakshmi Kannan</a><br>
+						<a href="https://github.com/lakshmi-kannan">https://github.com/lakshmi-kannan</a><br>
 						</small>
 					</p>
 				</section>
@@ -53,7 +56,7 @@
 					<h2>Credits</h2>
 					<ul>
 					<li>Built by engineers at Rackspace.</li>
-					<li>Thanks: James Burkhart, Shane Duan, Gary Dusbabek, Chinmay Gupte, Dominic Lobue.</li>
+					<li>Thanks: James Burkhart, Shane Duan, Gary Dusbabek, Chinmay Gupte, Dominic Lobue and others.</li>
 					</ul>
 				</section>
 
@@ -92,12 +95,21 @@
 						<li>We are able to ingest billions of data points per day.</li>
 						<ul>
 					</section>
+                    <section>
+                        <h2>Twitter reactions</h2>
+                        <p>The positive ones are boring.</p>
+                        <ul>
+                        <li>"Interesting rrd-like system but at cloud scale. How does it compare to #opentsdb or #kairosdb ?"</li>
+                        <li>"We did build something similar to this... ...but we push tens of billions of points a day through it, and counting."</li>
+                        <ul>
+                    </section>
 				</section>
 
 				<section>
 					<h2>Why Cassandra?</h2>
 					<ul>
-					<li>High write throughput, faster reads.</li>
+					<li>High write throughput (60, 000 points/sec peak on a single box).</li>
+                    <li>Reasonable read performance (depends on queries).</li>
 					<li>Cassandra data model supports time series datastore easily.</li>
 					<li>Casdandra's native TTL support.</li>
 					<li>Cassandra committer in team, devops experience at operations.</li>
@@ -146,7 +158,8 @@
 					<h2>Rollup module</h2>
 					<ul>
 					<li>Fixed granularities - 5 min, 20 min, 60 min, 4 hr, 1 day.</li>
-					<li>Restrictive rollup types - mean, min, max, std. dev.</li>
+					<li>Restrictive rollup types.</li>
+                    <li>Basic rollups - mean, min, max, std. dev</li>
 					<li>Experimental statsd support for counters, timers, gauge, set</li>
 					<li>Experimental histogram support.</li>
 					<li>No rollups for strings and boolean data.</li>
@@ -171,6 +184,7 @@
 					<ul>
 						<li>Elastic Search indexer and discovery. (Experimental)</li>
 						<li>Cloud files exporter for rollups. (Experimental)</li>
+                        <li>Apache Kafka exporter for rollups. (Experimental)</li>
 					</ul>
 				</section>
 
@@ -205,9 +219,9 @@
                 <section>
                     <h2>Cool story, give me data?</h2>
                     <ul>
-                        <li>We ingest 1 million individual data points a minute.</li>
+                        <li>We ingest 1 million individual data points a minute. Peaked at 3 M/min.</li>
                         <li>We roll more than 1 million individual metrics.</li>
-                        <li>We have hit a peak of 2 million Cassandra operations a minute.</li>
+                        <li>We have hit a peak of 3 million Cassandra operations a minute.</li>
                         <li>Read queries are more like 500 a minute.</li>
                     </ul>
                 </section>
@@ -239,9 +253,11 @@
                     <ul>
                         <li>Most major operational issues so far are due to Cassandra.</li>
                         <li>Split metrics into different column families for isolation.</li>
-                        <li>Leveled compaction is bad. Use size tiered for time series data.</li>
+                        <li>Leveled compaction is bad; Use size tiered for time series data.</li>
                         <li>Live upgrade of Cassandra cluster is not easy.</li>
+                        <li>Cassandra rpc type 'sync' works better for us than 'hsha'.</li>
                         <li>Migrations are hard. Think through data model carefully.</li>
+                        <li>Upgrade Cassandra on every opportunity.</li>
                         <li>Distributed systems are still hard in 2014. Changes are not easy to make.</li>
                     </ul>
                 </section>
@@ -249,7 +265,7 @@
                 <section>
                     <h2>Meta lessons learnt</h2>
                     <ul>
-                        <li>JAVA is not everyone's cup of tea.</li>
+                        <li>Y U JAVA? Java is not everyone's cup of tea.</li>
                         <li>Blueflood requires better packaging. Docker!!!</li>
                         <li>40, 000 lines of code is not fun. Open source early.</li>
                         <li>Documentation! We have documentation days now.</li>
@@ -267,7 +283,10 @@
                 </section>
 
 				<section>
-                <h2>Questions?</h2>
+                    <h2>Questions?</h2>
+                    <ul>
+                        <li><a href="https://github.com/rackerlabs/blueflood/wiki/FAQ">(F)AQ</a></li>
+                    </ul>
                 </section>
 
 			</div>
