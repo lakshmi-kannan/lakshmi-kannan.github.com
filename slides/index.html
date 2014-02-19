@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Blueflood</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Blueflood</h1>
+					<h3>Multi-tenanted time series datastore</h3>
+					<h4><a href="http://blueflood.io">http://blueflood.io</a></h4>
+                    <h4><a href="https://intelligence.rackspace.com">https://intelligence.rackspace.com</a></h4>
+
+					<br>
+					<br>
+					<p>
+						<small>
+                        <a href="http://lakshmikannan.me">Lakshmi Kannan</a><br>
+						<a href="https://github.com/lakshmi-kannan">https://github.com/lakshmi-kannan</a><br>
+						</small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Credits</h2>
+					<ul>
+					<li>Built by engineers at Rackspace.</li>
+					<li>Thanks: James Burkhart, Shane Duan, Gary Dusbabek, Chinmay Gupte, Dominic Lobue and others.</li>
+					</ul>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+				    <section>
+				    	<h2>What?</h2>
+				    	<p>A giant distributed calculator that loves numbers.</p>
+				    </section>
+				    <section>
+				    	<h2>What?</h2>
+				    	<ul>
+				    	<li>A time series datastore built on top of Cassandra.</li>
+				    	<li>Provides HTTP APIs to ingest and query data.</li>
+				    	<li>Supports numeric, string and boolean time series data.</li>
+				    	<li>Blueflood is open source. Hack away!</li>
+				    	</ul>
+				    </section>
+					<section>
+						<h2>Why?</h2>
+						<p>Need...<p>
+						<ul>
+						<li>a time series datastore for graphs.</li>
+						<li>a multi-tenanted solution.</li>
+						<li>datastore scales horizontally (as number of tenants, number of metrics grow).</li>
+						</ul>
+					</section>
+					<section>
+						<h2>How?</h2>
+						<p><a href="https://github.com/rackerlabs/blueflood"><img src="images/shortcut.jpg"></a></p>
+					</section>
+					<section>
+						<h2>So what?</h2>
+						<ul>
+						<li>Rackspace cloud control panel shows graphs now.</li>
+						<li>We are able to ingest billions of data points per day.</li>
+						<ul>
+					</section>
+                    <section>
+                        <h2>Twitter reactions</h2>
+                        <p>The positive ones are boring.</p>
+                        <ul>
+                        <li>"Interesting rrd-like system but at cloud scale. How does it compare to #opentsdb or #kairosdb ?"</li>
+                        <li>"We did build something similar to this... ...but we push tens of billions of points a day through it, and counting."</li>
+                        <ul>
+                    </section>
+				</section>
+
+				<section>
+					<h2>Why Cassandra?</h2>
+					<ul>
+					<li>High write throughput (60, 000 points/sec peak on a single box).</li>
+                    <li>Reasonable read performance (depends on queries).</li>
+					<li>Cassandra data model supports time series datastore easily.</li>
+					<li>Casdandra's native TTL support.</li>
+					<li>Cassandra committer in team, devops experience at operations.</li>
+					<li>Lessons learned from CloudKick.</li>
+					</ul>
+                    <p><img src="images/cassandra.png"></p>
+				</section>
+
+				<section>
+					<h2>OpenTSDB? Kairos DB? Cyanite? Graphite? InfluxDB?</h2>
+					<p>OpenTSDB is the only real competitor but Cassandra vs. HBASE.</p>
+					<p><img src = "images/shrek.gif"></p>
+				</section>
+
+				<section>
+					<h2>Blueflood primary components</h2>
+					<ul>
+					<li>Ingest module - Handling incoming writes.</li>
+					<li>Rollup module - Computing aggregations/summarizations.</li>
+					<li>Query module - Handling user queries.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Ingest module</h2>
+					<ul>
+					<li>HTTP POST with JSON body.</li>
+					<li>Production now uses scribe and thrift.</li>
+					<li>Custom ingestion adapters can be written.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Metric structure</h2>
+					<p>
+					<ul>
+					<li>name - ord1-maas-prod-dcass0.bf.rollup_timer</li>
+					<li>value - 35.6789</li>
+					<li>ttl (in seconds) (optional) - 172800</li>
+                    <li>unit (optional) - 'seconds'</li>
+					</ul>
+					<p>Example: <a href="https://github.com/rackerlabs/blueflood/wiki/10minuteguide#wiki-send-numeric-metrics">Publish numeric metrics</a></p>
+				</section>
+
+				<section>
+					<h2>Rollup module</h2>
+					<ul>
+					<li>Fixed granularities - 5 min, 20 min, 60 min, 4 hr, 1 day.</li>
+					<li>Restrictive rollup types.</li>
+                    <li>Basic rollups - mean, min, max, std. dev</li>
+					<li>Experimental statsd support for counters, timers, gauge, set</li>
+					<li>Experimental histogram support.</li>
+					<li>No rollups for strings and boolean data.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Query module</h2>
+					<ul>
+						<li>HTTP APIs, JSON response.</li>
+                        <li>Batched reads of metric data is possible.</li>
+						<li>A time series is identified by metric name.</li>
+                        <li>We support "Get by points" and "Get by resolution" calls.</li>
+						<li>No fancy queries yet.</li>
+                        <li>Custom output adapters can be written.</li>
+					</ul>
+                    <p>Example: <a href="https://github.com/rackerlabs/blueflood/wiki/10minuteguide#wiki-retrieve-metrics">Retrieve numeric metrics</a></p>
+				</section>
+
+				<section>
+					<h2>Blueflood optional components</h2>
+					<ul>
+						<li>Elastic Search indexer and discovery. (Experimental)</li>
+						<li>Cloud files exporter for rollups. (Experimental)</li>
+                        <li>Apache Kafka exporter for rollups. (Experimental)</li>
+					</ul>
+				</section>
+
+                <section>
+                    <h2>Cassandra cluster</h2>
+                    <ul>
+                        <li>32 nodes across two data centers.</li>
+                        <li>Replication factor of 3.</li>
+                        <li>All read and write operations happen at ConsistencyLevel.ONE</li>
+                        <li>Astyanax client library with thrift.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Blueflood deployment</h2>
+                    <ul>
+                        <li>Blueflood node can run in any permutation of ingest, rollup and query modes.</li>
+                        <li>Blueflood nodes run on same boxes as dcass. Not required.</li>
+                        <li>Blueflood chef recipes would be open sourced eventually.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Operations</h2>
+                    <ul>
+                        <li>Blueflood is heavily instrumented. All metrics now reported to graphite.</li>
+                        <li>Rackspace monitoring agent plugins to capture KPIs.</li>
+                        <li>Command line tools to dump metrics, roll data etc.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Cool story, give me data?</h2>
+                    <ul>
+                        <li>We ingest 1 million individual data points a minute. Peaked at 3 M/min.</li>
+                        <li>We roll more than 1 million individual metrics.</li>
+                        <li>We have hit a peak of 3 million Cassandra operations a minute.</li>
+                        <li>Read queries are more like 500 a minute.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Team logistics</h2>
+                    <ul>
+                        <li>Small team with one remote developer.</li>
+                        <li>Primary communication happens on IRC.</li>
+                        <li>Mostly not big on process but ownership is strong.</li>
+                        <li>Every merge to master must be deployed.</li>
+                        <li>Instrumentation is paramount. Operational focus is vital.</li>
+                        <li>Ground up product and project decisions.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Upcoming features</h2>
+                    <ul>
+                        <li>Graphite integration.</li>
+                        <li>Tags based metrics retrieval.</li>
+                        <li>Richer queries.</li>
+                        <li>Aggregation functions.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Technical lessons learnt</h2>
+                    <ul>
+                        <li>Most major operational issues so far are due to Cassandra.</li>
+                        <li>Split metrics into different column families for isolation.</li>
+                        <li>Leveled compaction is bad; Use size tiered for time series data.</li>
+                        <li>Live upgrade of Cassandra cluster is not easy.</li>
+                        <li>Cassandra rpc type 'sync' works better for us than 'hsha'.</li>
+                        <li>Migrations are hard. Think through data model carefully.</li>
+                        <li>Upgrade Cassandra on every opportunity.</li>
+                        <li>Distributed systems are still hard in 2014. Changes are not easy to make.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Meta lessons learnt</h2>
+                    <ul>
+                        <li>Y U JAVA? Java is not everyone's cup of tea.</li>
+                        <li>Blueflood requires better packaging. Docker!!!</li>
+                        <li>40, 000 lines of code is not fun. Open source early.</li>
+                        <li>Documentation! We have documentation days now.</li>
+                        <li>People ask good questions on email/IRC. Capture them.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>How can I participate?</h2>
+                    <ul>
+                        <li>Open sourced in summer of 2013. Apache 2 license.</li>
+                        <li>Most discussions happen on IRC. #blueflood on freenode.</li>
+                        <li>blueflood-discuss google groups for technical discussions.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Questions?</h2>
+                    <ul>
+                        <li><a href="https://github.com/rackerlabs/blueflood/wiki/FAQ">(F)AQ</a></li>
+                    </ul>
+                </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
