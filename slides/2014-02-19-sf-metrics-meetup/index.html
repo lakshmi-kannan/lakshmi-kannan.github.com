@@ -57,6 +57,7 @@
 					<ul>
 					<li>Built by engineers at Rackspace.</li>
 					<li>Thanks: James Burkhart, Shane Duan, Gary Dusbabek, Chinmay Gupte, Dominic Lobue and others.</li>
+                    <li>If you have product questions or comments, speak with James Colgan and Mark Everett.</li>
 					</ul>
 				</section>
 
@@ -186,6 +187,16 @@
                         <li>Apache Kafka exporter for rollups. (Experimental)</li>
 					</ul>
 				</section>
+
+                <section>
+                    <h2>10, 000 ft view of Blueflood architecture</h2>
+                    <ul>
+                        <li>Metrics -> shards (128).</li>
+                        <li>Each BF node owns a set of shards.</li>
+                        <li>Each BF worker has a peer. ZK for coordination.</li>
+                        <li>Time -> Slots (modulo 14 days).</li>
+                    </ul>
+                </section>
 
                 <section>
                     <h2>Cassandra cluster</h2>
