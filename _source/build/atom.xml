@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>http://www.lakshmikannan.me</title>
+	<subtitle>The good, the bad and the ugly.</subtitle>
+	<link href="http://www.lakshmikannan.me" rel="self" />
+	<link href="http://www.lakshmikannan.me" />
+	<id>http://www.lakshmikannan.me</id>
+	<updated>2014-06-05T12:43:31-07:00</updated>
+	<author>
+		<name>Lakshmi Kannan</name>
+		<email>lakshmi@lakshmikannan.me</email>
+	</author>
+
+    
+</feed>
